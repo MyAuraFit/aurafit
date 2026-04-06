@@ -1,0 +1,35 @@
+<LoginScreen>
+    name: "login screen"
+    AnchorLayout:
+        anchor_y: "top"
+        CustomBoxLayout:
+            orientation: "vertical"
+            padding: "20dp"
+            spacing: "20dp"
+            adaptive_height: True
+            IconButton:
+                icon: "arrow-left"
+                bg_color: app.theme_cls.card_color
+                radius: "16dp"
+                on_release: root.manager.current = "splash screen"
+            CustomLabel:
+                text: "Welcome back"
+                font_size: "32sp"
+                bold: True
+                adaptive_height: True
+                halign: "center"
+            CustomLabel:
+                text: "Choose the service below that you used to signup with"
+                adaptive_height: True
+                halign: "center"
+            CustomButton:
+                size_hint_y: None
+                height: "45dp"
+                radius: self.height / 2
+                text: "[font={}]{}[/font] Sign in with Google".format(icon_path, md_icons["google"])
+                pos_hint: {"center_x": .5}
+                markup: True
+                bold: True
+                shadow_color: app.theme_cls.shadow_color
+                pos: root.width - self.width - dp(20), "40dp"
+                on_release: root.signup_with_google()

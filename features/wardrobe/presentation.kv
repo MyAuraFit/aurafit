@@ -1,0 +1,57 @@
+<WardrobeScreen>
+    name: "wardrobe screen"
+    BoxLayout:
+        orientation: "vertical"
+        CustomBoxLayout:
+            padding: "20dp"
+            adaptive_height: True
+            spacing: "15dp"
+            CustomLabel:
+                text: "Wardrobe"
+                adaptive_height: True
+                font_size: "28sp"
+                bold: True
+                pos_hint: {"center_y": .5}
+            IconButton:
+                bg_color: app.theme_cls.card_color
+                icon: "plus"
+                -radius: "12dp"
+                size: "35dp", "35dp"
+                pos_hint: {"center_y": .5}
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.show_dropdown(self)
+            IconButton:
+                bg_color: app.theme_cls.card_color
+                icon: "account"
+                -radius: "12dp"
+                size: "35dp", "35dp"
+                pos_hint: {"center_y": .5}
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.manager.current = "account screen"
+        RecycleView:
+            id: rv
+            viewclass: "WardrobeItem"
+            effect_cls: "ScrollEffect"
+            scroll_distance: 0
+            bar_width: 0
+            do_scroll_x: False
+            RecycleGridLayout:
+                id: rv_grid
+                size_hint_y: None
+                cols: 3
+                height: self.minimum_height
+                padding: 0, 0, 0, "100dp"
+                spacing: "1dp"
+                default_size_hint: 1, None
+                default_size: 0, self.width/3
+    CircularProgressIndicator:
+        id: spinner
+        active: False
+        line_width: "1dp"
+        determinate: True
+        size_hint: None, None
+        size: "10dp", "10dp"
+        pos_hint: {"center_x": .5}
+        y: "80dp"
+
+<WardrobeItem@TouchRippleButtonBehavior+CoverImage>

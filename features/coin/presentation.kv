@@ -1,0 +1,280 @@
+<CoinScreen>
+    name: "coin screen"
+    BoxLayout:
+        orientation: "vertical"
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp"
+            IconButton:
+                icon: "arrow-left"
+                radius: self.height / 2
+                bg_color: app.theme_cls.card_color
+                pos_hint: {"center_y": .5}
+                size: "35dp", "35dp"
+                font_size: "20sp"
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.manager.go_back()
+            CustomLabel:
+                text: "AuraCoins"
+                adaptive_height: True
+                bold: True
+                halign: "center"
+                pos_hint: {"center_y": .5}
+            Widget:
+                size_hint: None, None
+                size: "35dp", "35dp"
+        ScrollView:
+            scroll_distance: 0
+            bar_width: 0
+            do_scroll_x: False
+            effect_cls: ScrollEffect
+            CustomBoxLayout:
+                adaptive_height: True
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "20dp"
+                CustomBoxLayout:
+                    adaptive_height: True
+                    radius: "20dp"
+                    padding: "20dp"
+                    line_width: 1
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    CustomBoxLayout:
+                        orientation: "vertical"
+                        spacing: "10dp"
+                        adaptive_height: True
+                        CustomLabel:
+                            text: "Coins"
+                            adaptive_height: True
+                            font_size: "20sp"
+                            bold: True
+                        CustomLabel:
+                            text: "Premium Trial"
+                            adaptive_size: True
+                            font_size: "13sp"
+                            bg_color: app.theme_cls.primary_color
+                            radius: "8dp"
+                            bold: True
+                            color: app.theme_cls.card_color
+                            padding: "10dp", "2dp"
+                    CustomBoxLayout:
+                        padding: "10dp"
+                        adaptive_size: True
+                        pos_hint: {"center_y": .5}
+                        shadow_color: app.theme_cls.shadow_color
+                        bg_color: app.theme_cls.card_color
+                        radius: self.height / 2
+                        padding: "10dp", "5dp"
+                        line_color: app.theme_cls.text_color[:3] + [.3]
+                        line_width: 1
+                        Icon:
+                            icon: "star-circle"
+                            font_size: "32sp"
+                        CustomLabel:
+                            font_size: "24sp"
+                            text: "25"
+                            bold: True
+                            adaptive_size: True
+                CustomBoxLayout:
+                    adaptive_height: True
+                    radius: "20dp"
+                    padding: "20dp"
+                    line_width: 1
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    spacing: "20dp"
+                    CustomLabel:
+                        text: "Refer and earn free monthly premium subscription"
+                        adaptive_height: True
+                        pos_hint: {"center_y": .5}
+                    CustomButton:
+                        size_hint_y: None
+                        height: "40dp"
+                        adaptive_width: True
+                        padding: "12dp", 0
+                        radius: "12dp"
+                        text: "Refer now"
+                        bold: True
+                        font_size: "13sp"
+                        pos_hint: {"center_y": .5}
+                        shadow_color: app.theme_cls.shadow_color
+                CustomBoxLayout:
+                    orientation: "vertical"
+                    adaptive_height: True
+                    radius: "20dp"
+                    padding: "20dp"
+                    line_width: 1
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    spacing: "20dp"
+                    CustomLabel:
+                        text: "Premium benefits"
+                        adaptive_height: True
+                        font_size: "20sp"
+                        bold: True
+                        halign: "center"
+                    CustomBoxLayout:
+                        adaptive_height: True
+                        PremiumBenefits:
+                            icon: "advertisements-off"
+                            text: "No ads"
+                        Icon:
+                            icon: "plus"
+                            pos_hint: {"top": 1}
+                        PremiumBenefits:
+                            icon: "infinity"
+                            text: "Unlimited outfits"
+                    CustomButton:
+                        size_hint_y: None
+                        height: "50dp"
+                        radius: "16dp"
+                        text: "Upgrade"
+                        bold: True
+                        pos_hint: {"center_x": .5}
+                        y: "20dp"
+                        shadow_color: app.theme_cls.shadow_color
+                        on_release: root.manager.current = "result screen"
+                CustomBoxLayout:
+                    orientation: "vertical"
+                    adaptive_height: True
+                    radius: "20dp"
+                    padding: "20dp"
+                    line_width: 1
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    spacing: "20dp"
+                    CustomLabel:
+                        text: "Check-in daily"
+                        adaptive_height: True
+                        font_size: "20sp"
+                        bold: True
+                        halign: "center"
+                    GridLayout:
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: "10dp"
+                        cols: 3
+                        Tasks:
+                            point: "2"
+                            day: "1"
+                        Tasks
+                            point: "2"
+                            day: "2"
+                        Tasks:
+                            point: "2"
+                            day: "3"
+                        Tasks:
+                            point: "2"
+                            day: "4"
+                        Tasks:
+                            point: "2"
+                            day: "5"
+                        Tasks:
+                            point: "2"
+                            day: "6"
+                    Tasks:
+                        point: "1 day"
+                        day: "7"
+                        icon: "crown"
+                CustomLabel:
+                    text: "Complete tasks to get coins"
+                    font_size: "20sp"
+                    adaptive_height: True
+                    bold: True
+                    halign: "center"
+                    padding: 0, "20dp"
+                CustomBoxLayout:
+                    adaptive_height: True
+                    radius: "20dp"
+                    padding: "20dp"
+                    line_width: 1
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    spacing: "20dp"
+                    CustomBoxLayout:
+                        adaptive_height: True
+                        orientation: "vertical"
+                        spacing: "10dp"
+                        CustomLabel:
+                            text: "Watch video ads\n(30 sec or 1 min)"
+                            adaptive_height: True
+                            bold: True
+                            pos_hint: {"center_y": .5}
+                        CustomBoxLayout:
+                            adaptive_size: True
+                            spacing: "5dp"
+                            Icon:
+                                icon: "star-circle"
+                            CustomLabel:
+                                text: "+5"
+                                bold: True
+                                adaptive_size: True
+                    CustomButton:
+                        size_hint_y: None
+                        height: "40dp"
+                        adaptive_width: True
+                        padding: "20dp", 0
+                        radius: "12dp"
+                        text: "Watch"
+                        bold: True
+                        font_size: "13sp"
+                        pos_hint: {"center_y": .5}
+                        shadow_color: app.theme_cls.shadow_color
+
+
+
+
+<PremiumBenefits@CustomBoxLayout>
+    orientation: "vertical"
+    adaptive_height: True
+    icon: "blank"
+    text: ""
+    Icon:
+        icon: root.icon
+        font_size: "24sp"
+        pos_hint: {"center_x": .5}
+    CustomLabel:
+        text: root.text
+        adaptive_height: True
+        halign: "center"
+        bold: True
+        font_size: "13sp"
+
+<Tasks@ButtonBoxLayout>
+    orientation: "vertical"
+    adaptive_height: True
+    line_width: 1
+    shadow_color: app.theme_cls.shadow_color
+    bg_color: app.theme_cls.card_color
+    line_color: app.theme_cls.text_color[:3] + [.3]
+    radius: "10dp"
+    point: "0"
+    day: "0"
+    icon: "star-circle"
+    CustomBoxLayout:
+        adaptive_size: True
+        spacing: "5dp"
+        padding: "20dp", "5dp"
+        pos_hint: {"center_x": .5}
+        Icon:
+            icon: root.icon
+        CustomLabel:
+            text: "+{}".format(root.point)
+            bold: True
+            adaptive_size: True
+    CustomLabel:
+        adaptive_height: True
+        text: "Day{}".format(root.day)
+        font_size: "13sp"
+        halign: "center"
+        bg_color: app.theme_cls.primary_color
+        radius: 0, 0, "10dp", "10dp"
+        color: app.theme_cls.bg_color
+        bold: True
+        padding: "10dp", "3dp"

@@ -1,0 +1,195 @@
+<InstantfitScreen>
+    name: "instantfit screen"
+    BoxLayout:
+        orientation: "vertical"
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp"
+            IconButton:
+                icon: "arrow-left"
+                radius: self.height / 2
+                bg_color: app.theme_cls.card_color
+                pos_hint: {"center_y": .5}
+                size: "35dp", "35dp"
+                font_size: "20sp"
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.manager.go_back()
+            CustomLabel:
+                text: "InstantFit"
+                adaptive_height: True
+                bold: True
+                halign: "center"
+                pos_hint: {"center_y": .5}
+            ButtonBoxLayout:
+                adaptive_size: True
+                shadow_color: app.theme_cls.shadow_color
+                bg_color: app.theme_cls.card_color
+                radius: self.height / 2
+                padding: "10dp", "5dp"
+                spacing: "5dp"
+                pos_hint: {"center_y": .5}
+                on_release: root.manager.current = "coin screen"
+                Icon:
+                    icon: "star-circle"
+                    font_size: "20sp"
+                CustomLabel:
+                    text: "3"
+                    bold: True
+                    pos_hint: {"center_y": .5}
+                    adaptive_size: True
+                    font_size: "14sp"
+        ScrollView:
+            scroll_distance: 0
+            bar_width: 0
+            do_scroll_x: False
+            CustomBoxLayout:
+                id: content
+                adaptive_height: True
+                spacing: "20dp"
+                orientation: "vertical"
+                padding: "20dp"
+                CustomTextInput:
+                    id: text_input
+                    hint_text: "How do you want to feel today...?"
+                    hint_text_color: app.theme_cls.text_color
+                    multiline: True
+                    size_hint_y: None
+                    -height: "150dp"
+                    font_name: "assets/fonts/Cardo-Italic.ttf"
+                    padding: "20dp"
+                    radius: "20dp"
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    shadow_color: app.theme_cls.shadow_color
+                    pos_hint: {"center_x": .5}
+                RelativeLayout:
+                    size_hint_y: None
+                    height: human_image.height
+                    ButtonBoxLayout:
+                        id: human_image
+                        adaptive_height: True
+                        line_color: app.theme_cls.text_color[:3] + [.3]
+                        radius: "20dp"
+                        line_width: 1
+                        shadow_color: app.theme_cls.shadow_color
+                        bg_color: app.theme_cls.card_color
+                        orientation: "vertical"
+                        padding: "20dp"
+                        spacing: "20dp"
+                        disabled: bool(selfie_cover_image.source)
+                        IconButton:
+                            icon: "image-filter-center-focus-strong"
+                            bg_color: app.theme_cls.text_color[:3] + [.05]
+                            radius: self.height / 2
+                            pos_hint: {"center_x": .5}
+                        CustomLabel:
+                            text: "Choose your photo\nFor better results, use a portrait (vertical) photo"
+                            font_size: "13sp"
+                            halign: "center"
+                            adaptive_height: True
+                        CustomButton:
+                            size_hint_y: None
+                            height: "50dp"
+                            radius: "16dp"
+                            text: "Gallery"
+                            bold: True
+                            pos_hint: {"center_x": .5}
+                            on_release: root.open_photo_picker("selfie")
+                        CustomButton:
+                            size_hint_y: None
+                            height: "50dp"
+                            radius: "16dp"
+                            text: "Camera"
+                            bold: True
+                            pos_hint: {"center_x": .5}
+                            color: app.theme_cls.text_color
+                            -bg_color: app.theme_cls.transparent_color
+                            line_color: app.theme_cls.text_color
+                            on_release: root.take_picture("selfie")
+                    CoverImage:
+                        id: selfie_cover_image
+                        radius: "20dp"
+                        color: [0, 0, 0, 0] if not self.source else "white"
+                    IconButton:
+                        icon: "close"
+                        radius: self.height / 2
+                        bg_color: app.theme_cls.card_color
+                        pos: self.parent.width - self.width - dp(20), self.parent.height - self.height - dp(20)
+                        size: "35dp", "35dp"
+                        font_size: "20sp"
+                        shadow_color: app.theme_cls.shadow_color
+                        opacity: int(bool(selfie_cover_image.source))
+                        disabled: not selfie_cover_image.source
+                        on_release: selfie_cover_image.source = ""
+                RelativeLayout:
+                    size_hint_y: None
+                    height: cloth_image.height
+                    ButtonBoxLayout:
+                        id: cloth_image
+                        adaptive_height: True
+                        line_color: app.theme_cls.text_color[:3] + [.3]
+                        radius: "20dp"
+                        line_width: 1
+                        shadow_color: app.theme_cls.shadow_color
+                        bg_color: app.theme_cls.card_color
+                        orientation: "vertical"
+                        padding: "20dp"
+                        spacing: "20dp"
+                        disabled: bool(cloth_cover_image.source)
+                        IconButton:
+                            icon: "image-filter-center-focus-strong"
+                            bg_color: app.theme_cls.text_color[:3] + [.05]
+                            radius: self.height / 2
+                            pos_hint: {"center_x": .5}
+                        CustomLabel:
+                            text: "Choose your cloth\nFor better results, use a portrait (vertical) photo"
+                            font_size: "13sp"
+                            halign: "center"
+                            adaptive_height: True
+                        CustomButton:
+                            size_hint_y: None
+                            height: "50dp"
+                            radius: "16dp"
+                            text: "Gallery"
+                            bold: True
+                            pos_hint: {"center_x": .5}
+                            on_release: root.open_photo_picker("cloth")
+                        CustomButton:
+                            size_hint_y: None
+                            height: "50dp"
+                            radius: "16dp"
+                            text: "Camera"
+                            bold: True
+                            pos_hint: {"center_x": .5}
+                            color: app.theme_cls.text_color
+                            -bg_color: app.theme_cls.transparent_color
+                            line_color: app.theme_cls.text_color
+                            on_release: root.take_picture("cloth")
+                    CoverImage:
+                        id: cloth_cover_image
+                        radius: "20dp"
+                        color: [0, 0, 0, 0] if not self.source else "white"
+                    IconButton:
+                        icon: "close"
+                        radius: self.height / 2
+                        bg_color: app.theme_cls.card_color
+                        pos: self.parent.width - self.width - dp(20), self.parent.height - self.height - dp(20)
+                        size: "35dp", "35dp"
+                        font_size: "20sp"
+                        shadow_color: app.theme_cls.shadow_color
+                        opacity: int(bool(cloth_cover_image.source))
+                        disabled: not cloth_cover_image.source
+                        on_release: cloth_cover_image.source = ""
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp"
+            CustomButton:
+                id: btn
+                size_hint: None, None
+                size: root.width - dp(40), "50dp"
+                radius: "16dp"
+                text: "Generate My Aurafit"
+                bold: True
+                pos_hint: {"center_x": .5}
+                shadow_color: app.theme_cls.shadow_color
+                disabled: not (cloth_cover_image.source and selfie_cover_image.source and text_input.text)
+                on_release: root.generate_my_aurafit()

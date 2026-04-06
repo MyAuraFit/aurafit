@@ -1,0 +1,63 @@
+<AutofitScreen>
+    name: "autofit screen"
+    CustomBoxLayout:
+        adaptive_height: True
+        padding: "20dp"
+        pos_hint: {"top": 1}
+        IconButton:
+            icon: "arrow-left"
+            radius: self.height / 2
+            bg_color: app.theme_cls.card_color
+            pos_hint: {"center_y": .5}
+            size: "35dp", "35dp"
+            font_size: "20sp"
+            shadow_color: app.theme_cls.shadow_color
+            on_release: root.manager.go_back()
+        CustomLabel:
+            text: "AutoFit"
+            adaptive_height: True
+            bold: True
+            halign: "center"
+            pos_hint: {"center_y": .5}
+        ButtonBoxLayout:
+            adaptive_size: True
+            shadow_color: app.theme_cls.shadow_color
+            bg_color: app.theme_cls.card_color
+            radius: self.height / 2
+            padding: "10dp", "5dp"
+            spacing: "5dp"
+            pos_hint: {"center_y": .5}
+            on_release: root.manager.current = "coin screen"
+            Icon:
+                icon: "star-circle"
+                font_size: "20sp"
+            CustomLabel:
+                text: "3"
+                bold: True
+                pos_hint: {"center_y": .5}
+                adaptive_size: True
+                font_size: "14sp"
+    CustomTextInput:
+        id: text_input
+        hint_text: "How do you want to feel today...?"
+        hint_text_color: app.theme_cls.text_color
+        multiline: True
+        size_hint: None, None
+        -height: "150dp"
+        width: root.width - dp(80)
+        pos_hint: {"center_x": .5, "top": .8}
+        font_name: "assets/fonts/Cardo-Italic.ttf"
+        padding: "20dp"
+        radius: "20dp"
+        line_color: app.theme_cls.text_color[:3] + [.3]
+        shadow_color: app.theme_cls.shadow_color
+    CustomButton:
+        size_hint: None, None
+        size: root.width - dp(40), "50dp"
+        radius: "16dp"
+        text: "Generate My Aurafit"
+        bold: True
+        pos_hint: {"center_x": .5}
+        y: "20dp"
+        shadow_color: app.theme_cls.shadow_color
+        on_release: root.generate_my_aurafit()

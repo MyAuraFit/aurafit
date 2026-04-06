@@ -1,0 +1,14 @@
+<Dot>
+    size_hint: None, None
+    size: "5dp", "5dp"
+    bg_color:
+        (self.active_color or app.theme_cls.primary_color) \
+        if self.active else \
+        (self.normal_color or app.theme_cls.accent_color)
+    canvas:
+        Color:
+            rgba: self.bg_color
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: self.radius

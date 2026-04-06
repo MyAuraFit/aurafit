@@ -1,0 +1,86 @@
+<NavigationItemIcon>
+    primary_color: app.theme_cls.primary_color
+    font_size: "20sp"
+    adaptive_size: True
+    color:
+        ((
+        self.icon_color_active
+        if self.icon_color_active else
+        app.theme_cls.primary_color
+        ) if self.parent.parent.active else
+        (
+        self.icon_color_normal
+        if self.icon_color_normal else
+        app.theme_cls.text_color[:3] + [.7]
+        )) if self.parent else app.theme_cls.transparent_color
+    on_icon:
+        if self.icon not in md_icons.keys(): \
+        self.size_hint = (None, None); \
+        self.width = self.font_size; \
+        self.height = self.font_size
+
+<NavigationItemLabel>
+    adaptive_size: True
+    font_size: "12sp"
+    primary_color: app.theme_cls.primary_color
+    bold: (True if self.parent.parent.active else False) if self.parent else False
+    color:
+        ((
+        self.text_color_active
+        if self.text_color_active else
+        app.theme_cls.text_color
+        )
+        if self.parent.parent.active else
+        (
+        self.text_color_normal
+        if self.text_color_normal else
+        app.theme_cls.text_color
+        )) if self.parent else app.theme_cls.transparent_color
+
+<NavigationBar>
+    size_hint_y: None
+    height: self.actual_height + app.navbar_height
+    padding: 0, 0, 0, app.navbar_height
+    canvas:
+        Color:
+            rgba: app.theme_cls.bg_color if not self.bg_color else self.bg_color
+        SmoothRoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [0]
+    canvas.before:
+        Color:
+            rgba: root.shadow_color
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 0, 0
+            spread_radius: -dp(5), -dp(5)
+            border_radius: [0, 0, 0, 0]
+
+
+<NavigationItem>
+    BoxLayout:
+        id: icon_container
+        size_hint: None, None
+        size: self.minimum_size
+        pos_hint: {"center_x": .5}
+        y:
+            ( \
+            (root.parent.actual_height - (self.height + dp(16))) \
+            if label_container.children else \
+            (root.parent.actual_height / 2 - self.height / 2) \
+            ) \
+            if root.parent else 0
+
+    BoxLayout:
+        id: label_container
+        size_hint: None, None
+        size: self.minimum_size
+        pos_hint: {"center_x": .5}
+        y:
+            "16dp" \
+            if icon_container.children else \
+            ( \
+            (root.parent.actual_height / 2 - self.height / 2) if root.parent else 0 \
+            )

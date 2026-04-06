@@ -1,0 +1,97 @@
+<HomeScreen>
+    name: "home screen"
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "10dp"
+        CustomBoxLayout:
+            padding: "20dp"
+            adaptive_height: True
+            ButtonBoxLayout:
+                adaptive_size: True
+                shadow_color: app.theme_cls.shadow_color
+                bg_color: app.theme_cls.card_color
+                radius: self.height / 2
+                padding: "10dp", "5dp"
+                spacing: "5dp"
+                pos_hint: {"center_y": .5}
+                on_release: root.manager.current = "coin screen"
+                Icon:
+                    icon: "star-circle"
+                CustomLabel:
+                    text: "3"
+                    bold: True
+                    pos_hint: {"center_y": .5}
+                    font_size: "18sp"
+                    adaptive_size: True
+            Widget
+            IconButton:
+                bg_color: app.theme_cls.card_color
+                icon: "account"
+                radius: self.height / 2
+                pos_hint: {"center_y": .5}
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.manager.current = "account screen"
+        RelativeLayout
+            CustomBoxLayout:
+                size_hint: None, None
+                size: root.width - dp(80), dp(200)
+                pos_hint: {"center_x": .5, "top": .9}
+                spacing: "20dp"
+                orientation: "vertical"
+                CustomLabel:
+                    text: "AuraFit"
+                    bold: True
+                    font_size: "32sp"
+                    adaptive_height: True
+                    halign: "center"
+                ButtonBoxLayout:
+                    shadow_color: app.theme_cls.shadow_color
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    radius: "20dp"
+                    line_width: 1
+                    bg_color: app.theme_cls.card_color
+                    shadow_color: app.theme_cls.shadow_color
+                    on_release: root.pop_create_selection_sheet()
+                    CustomLabel:
+                        text: "How do you want to feel today...?"
+                        italic: True
+                        font_size: "16sp"
+                        adaptive_height: True
+                        pos_hint: {"top": 1}
+                        padding: "20dp"
+
+
+<CreateSelectionSheet>
+    spacing: "20dp"
+    IconButton:
+        icon: "close"
+        pos_hint: {"right": 1}
+        on_release: root.dismiss()
+    CustomLabel:
+        font_size: "32sp"
+        text: "Create your outfit"
+        bold: True
+        halign: "center"
+        adaptive_height: True
+    CustomButton:
+        size_hint_y: None
+        height: "50dp"
+        radius: "16dp"
+        text: "From wardrobe"
+        bold: True
+        pos_hint: {"center_y": .5}
+        shadow_color: app.theme_cls.shadow_color
+        on_release: root.go_to_autofit()
+    CustomButton:
+        size_hint_y: None
+        height: "50dp"
+        radius: "16dp"
+        text: "Immediately"
+        bold: True
+        pos_hint: {"center_y": .5}
+        color: app.theme_cls.text_color
+        -bg_color: app.theme_cls.bg_color
+        shadow_color: app.theme_cls.shadow_color
+        line_color: app.theme_cls.text_color
+        line_width: 1
+        on_release: root.go_to_instantfit()

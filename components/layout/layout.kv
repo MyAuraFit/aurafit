@@ -1,0 +1,28 @@
+<CustomBoxLayout>
+    canvas.before:
+        Color:
+            rgba: self.shadow_color
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 0, 0
+            spread_radius: -dp(5), -dp(5)
+            border_radius: [*self.radius]
+        Color:
+            rgba: self.bg_color
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: self.radius
+        Color:
+            rgba: self.line_color
+        Line:
+            width: self.line_width
+            rounded_rectangle:
+                [
+                self.x,
+                self.y,
+                self.width,
+                self.height,
+                *self.radius,
+                ]

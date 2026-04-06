@@ -1,0 +1,155 @@
+<AccountScreen>
+    name: "account screen"
+    BoxLayout:
+        orientation: "vertical"
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp"
+            IconButton:
+                icon: "arrow-left"
+                radius: self.height / 2
+                bg_color: app.theme_cls.card_color
+                pos_hint: {"center_y": .5}
+                size: "35dp", "35dp"
+                font_size: "20sp"
+                shadow_color: app.theme_cls.shadow_color
+                on_release: root.manager.go_back()
+            CustomLabel:
+                text: "Account"
+                adaptive_height: True
+                bold: True
+                halign: "center"
+                pos_hint: {"center_y": .5}
+            Widget:
+                size_hint: None, None
+                size: "35dp", "35dp"
+        Divider
+        ScrollView:
+            scroll_distance: 0
+            bar_width: 0
+            do_scroll_x: False
+            effect_cls: ScrollEffect
+            CustomBoxLayout:
+                adaptive_height: True
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "20dp"
+                ButtonBoxLayout:
+                    adaptive_height: True
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    radius: "20dp"
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    line_width: 1
+                    padding: "20dp"
+                    spacing: "15dp"
+                    CustomLabel:
+                        text: "K"
+                        font_size: "32sp"
+                        bold: True
+                        size_hint: None, None
+                        size: "50dp", "50dp"
+                        bg_color: app.theme_cls.text_color[:3] + [.1]
+                        halign: "center"
+                        radius: self.height / 2
+                    CustomBoxLayout:
+                        adaptive_height: True
+                        orientation: "vertical"
+                        pos_hint: {"center_y": .5}
+                        CustomLabel:
+                            text: "Kenechukwu Akubue"
+                            bold: True
+                            adaptive_height: True
+                            shorten_from: "right"
+                            shorten: True
+                        CustomLabel:
+                            text: "kengoon19@gmail.com"
+                            adaptive_height: True
+                            font_size: "14sp"
+                            bold: True
+                            color: app.theme_cls.text_color[:3] + [.5]
+                            shorten_from: "right"
+                            shorten: True
+                    Icon:
+                        icon: "chevron-right"
+                        pos_hint: {"center_y": .5}
+                AccountItem:
+                    icon: "bell-outline"
+                    text: "What's New"
+                CustomBoxLayout:
+                    adaptive_height: True
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    radius: "20dp"
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    line_width: 1
+                    orientation: "vertical"
+                    AccountItem:
+                        icon: "star-outline"
+                        text: "Rate Us"
+                        bg_color: 0, 0, 0, 0
+                        line_color: 0, 0, 0, 0
+                        shadow_color: 0, 0, 0, 0
+                        radius: 0
+                    Divider
+                    AccountItem:
+                        icon: "account-convert-outline"
+                        text: "My Referrals"
+                        bg_color: 0, 0, 0, 0
+                        line_color: 0, 0, 0, 0
+                        shadow_color: 0, 0, 0, 0
+                        radius: 0
+                CustomBoxLayout:
+                    adaptive_height: True
+                    shadow_color: app.theme_cls.shadow_color
+                    bg_color: app.theme_cls.card_color
+                    radius: "20dp"
+                    line_color: app.theme_cls.text_color[:3] + [.3]
+                    line_width: 1
+                    orientation: "vertical"
+                    AccountItem:
+                        icon: "frequently-asked-questions"
+                        text: "FAQ & Support"
+                        bg_color: 0, 0, 0, 0
+                        line_color: 0, 0, 0, 0
+                        shadow_color: 0, 0, 0, 0
+                        radius: 0
+                    Divider
+                    AccountItem:
+                        icon: "file-document-check-outline"
+                        text: "Privacy Policy"
+                        bg_color: 0, 0, 0, 0
+                        line_color: 0, 0, 0, 0
+                        shadow_color: 0, 0, 0, 0
+                        radius: 0
+                    Divider
+                    AccountItem:
+                        icon: "text-box-outline"
+                        text: "Terms of Service"
+                        bg_color: 0, 0, 0, 0
+                        line_color: 0, 0, 0, 0
+                        shadow_color: 0, 0, 0, 0
+                        radius: 0
+
+
+
+<AccountItem@ButtonBoxLayout>
+    adaptive_height: True
+    shadow_color: app.theme_cls.shadow_color
+    bg_color: app.theme_cls.card_color
+    radius: "20dp"
+    padding: "20dp"
+    line_color: app.theme_cls.text_color[:3] + [.3]
+    line_width: 1
+    spacing: "15dp"
+    icon: "blank"
+    text: ""
+    Icon:
+        icon: root.icon
+        font_size: "15sp"
+        padding: "5dp"
+        radius: "8dp"
+        bg_color: app.theme_cls.text_color[:3] + [.1]
+    CustomLabel:
+        text: root.text
+        adaptive_height: True

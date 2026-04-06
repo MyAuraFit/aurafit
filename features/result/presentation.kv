@@ -1,0 +1,170 @@
+<ResultScreen>
+    name: "result screen"
+    CoverImageButton:
+        id: image
+        fit_mode: "contain"
+        on_release: backdrop.set_state()
+    CustomBoxLayout:
+        id: toolbar
+        adaptive_height: True
+        padding: "20dp", app.statusbar_height + dp(20), "20dp", "20dp"
+        pos_hint: {"top": 1}
+        IconButton:
+            icon: "arrow-left"
+            radius: self.height / 2
+            bg_color: app.theme_cls.card_color
+            pos_hint: {"center_y": .5}
+            shadow_color: app.theme_cls.shadow_color
+            on_release: root.manager.current = "home screen"
+        Widget
+        ButtonBoxLayout:
+            adaptive_size: True
+            bg_color: app.theme_cls.card_color
+            shadow_color: app.theme_cls.shadow_color
+            radius: self.height / 2
+            padding: "10dp", "5dp"
+            spacing: "5dp"
+            pos_hint: {"center_y": .5}
+            Icon:
+                icon: "star-circle"
+            CustomLabel:
+                text: "3"
+                bold: True
+                pos_hint: {"center_y": .5}
+                font_size: "18sp"
+                adaptive_size: True
+    BackdropBoxLayout:
+        id: backdrop
+        radius: "30dp", "30dp", 0, 0
+        bg_color: app.theme_cls.card_color
+        adaptive_height: True
+        line_color: app.theme_cls.text_color[:3] + [.3]
+        line_width: 1
+        shadow_color: app.theme_cls.shadow_color
+        orientation: "vertical"
+        padding: 0, "20dp", 0, "20dp"
+        spacing: "20dp"
+        disable_swipe: True
+        Widget:
+            size_hint: None, None
+            size: "50dp", "4dp"
+            pos_hint: {"center_x": .5}
+            canvas:
+                Color:
+                    rgba: app.theme_cls.text_color[:3] + [.3]
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [dp(1.5)]
+        ScrollView:
+            scroll_distance: 0
+            bar_width: 0
+            do_scroll_y: False
+            size_hint_y: None
+            height: "90dp"
+            CustomBoxLayout:
+                id: outfits_box
+                adaptive_width: True
+                spacing: "20dp"
+                padding: "20dp", "5dp"
+                Style
+                    id: style_1
+                    active: True
+                    root: root
+                    on_active: if args[1]: image.texture = self.texture
+                Style:
+                    id: style_2
+                    root: root
+                    on_active: if args[1]: image.texture = self.texture
+                Style:
+                    id: style_3
+                    root: root
+                    on_active: if args[1]: image.texture = self.texture
+                Style:
+                    id: style_4
+                    root: root
+                    on_active: if args[1]: image.texture = self.texture
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp", 0
+            spacing: "10dp"
+            CustomButton:
+                height: "60dp"
+                radius: "16dp"
+                text: f"[font={icon_path}][size={int(sp(18))}]\U000F01DA[/size][/font] Download"
+                markup: True
+                bold: True
+                on_release: root.download_images()
+            CustomButton:
+                size_hint: None, None
+                size: "60dp", "60dp"
+                radius: "16dp"
+                text: f"[font={icon_path}][size={int(sp(18))}]\U000F0497[/size][/font]"
+                markup: True
+                bold: True
+                on_release: root.share_images()
+
+<CustomizeButton@ButtonBoxLayout>
+    orientation: "vertical"
+    padding: 0, "15dp"
+    text: ""
+    icon: ""
+    bg_color: app.theme_cls.card_color
+    line_color: app.theme_cls.text_color[:3] + [.3]
+    shadow_color: app.theme_cls.shadow_color
+    line_width: 1
+    radius: "20dp"
+    spacing: "10dp"
+    adaptive_height: True
+    Icon:
+        icon: root.icon
+        pos_hint: {"center_x": .5}
+    CustomLabel:
+        text: root.text
+        halign: "center"
+        adaptive_height: True
+        font_size: "11sp"
+
+<Style@ToggleBoxLayout>
+    line_width: "2dp"
+    radius: "20dp"
+    size_hint: None, None
+    size: "80dp", "80dp"
+    group: "styles"
+    source: ""
+    loading_image: ""
+    root: None
+    RelativeLayout:
+        CoverImage:
+            source: root.source
+            loading_image: root.loading_image
+            radius: "20dp"
+            color: app.theme_cls.accent_color if not self.source else "white"
+            on_load: root.root.save_outfit(self.texture)
+
+<BackdropBoxLayout@BackdropBehavior+CustomBoxLayout>
+
+<CoverImageButton@ButtonBehavior+CoverImage>
+
+<ShimmerWidget@CustomBoxLayout>
+    bg_color: app.theme_cls.bg_color
+    orientation: "vertical"
+    padding: "20dp", app.statusbar_height + dp(20)
+    is_removable: True
+    IconButton:
+        icon: "close"
+        on_release:
+            root.parent.remove_widget(root)
+            root.parent.manager.go_back()
+    CustomLabel:
+        id: lbl
+        halign: "center"
+        font_size: "32sp"
+        shimmer_x: -self.width
+        canvas.after:
+            Color:
+                rgba: app.theme_cls.bg_color[:3] + [0.5]
+            Rectangle:
+                pos: self.x + (self.shimmer_x or -self.width), self.y
+                size: self.width * 0.1, self.height
+

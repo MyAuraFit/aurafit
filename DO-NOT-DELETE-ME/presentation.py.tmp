@@ -1,0 +1,270 @@
+__all__ = ("ResultScreen",)
+
+import os
+import time
+from os import mkdir
+from os.path import join, dirname, basename, exists
+
+from jnius import cast
+from kivy.animation import Animation
+from kivy.clock import mainthread
+from kivy.factory import Factory
+from kivy.lang import Builder
+
+from features.basescreen import BaseScreen
+from libs.remoteconfigdatasource import RemoteConfigDataSource
+from libs.serialize import serialize
+from libs.throttle import CallLimiter
+from sjfirebase.tools.mixin import FunctionMixin
+from sjfirebaseai.jclass import (
+    FirebaseAI,
+    GenerativeBackend,
+    GenerationConfig,
+    ResponseModality,
+    GenerativeModelFutures,
+    Content,
+    ImagePart,
+    TextPart,
+    GenerateContentResponse,
+    RequestOptions,
+)
+
+Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+
+
+class ResultScreen(BaseScreen, FunctionMixin):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.image_paths = []
+        self.cancel = False
+        self.ai = FirebaseAI.getInstance(
+            GenerativeBackend.vertexAI("global")
+        ).generativeModel(
+            RemoteConfigDataSource.aurafit_model(),
+            GenerationConfig.Builder()
+            .setResponseModalities(
+                serialize([ResponseModality.TEXT, ResponseModality.IMAGE])
+            )
+            .build(),
+            None,
+            None,
+            None,
+            Content.Builder()
+            .addText(RemoteConfigDataSource.aurafit_system_prompt())
+            .build(),
+            RequestOptions(),
+        )
+        self.model = GenerativeModelFutures.from_(self.ai)
+        self.future_callback = None
+
+    def on_pre_enter(self, *args):
+        shimmer_box = Factory.ShimmerWidget()
+        self.add_widget(shimmer_box)
+        self.update_outfit_label_progress(shimmer_box.ids.lbl)
+        self.generate_outfit()
+
+    @CallLimiter(max_calls=4)
+    def generate_outfit(self):
+        outfit_data = self.get_screen_data()
+        self.get_https_callable_call(
+            "generate_image",
+            data=outfit_data,
+            timeout=600,
+            listener=self.on_outfit_generated,
+            enforce_app_check=False,
+        )
+
+    @mainthread
+    def update_outfit_label_progress(self, lbl):
+        messages = [
+            "Creating the outfit...",
+            "Almost there...",
+            "Adding the final touches...",
+        ]
+        index = 0
+        lbl.text = messages[index]
+
+        anim = Animation(shimmer_x=lbl.width * 1.2, duration=5, step=1 / 20)
+
+        def change_text(_, widget):
+
+            nonlocal index, anim
+            index = (index + 1) % len(messages)
+            widget.text = messages[index]
+            lbl.shimmer_x = -lbl.width
+            anim = Animation(shimmer_x=lbl.width * 1.2, duration=5, step=1 / 30)
+            anim.bind(on_complete=change_text)
+            anim.start(lbl)
+
+        anim.bind(on_complete=change_text)
+        anim.start(lbl)
+
+    @mainthread
+    def on_outfit_generated(self, success, data):
+        if self.cancel:
+            self.cancel = False
+            if self.manager.current == self.name:
+                self.generate_outfit()
+            return
+        if not success:
+            print(data)
+            self.generate_outfit.decrement()
+            self.generate_outfit()
+            return
+        if self.generate_outfit.calls_made() > 4:
+            return
+        self.ids[f"style_{self.generate_outfit.calls_made()}"].loading_image = data[
+            "thumbnail"
+        ]
+        self.ids[f"style_{self.generate_outfit.calls_made()}"].source = data["image"]
+        if self.generate_outfit.calls_made() == 1:
+            self.ids.image.loading_image = data["thumbnail"]
+            self.ids.image.source = data["image"]
+
+            if hasattr(self.children[0], "is_removable"):
+                self.remove_widget(self.children[0])
+        if self.generate_outfit.calls_made() == 4:
+            self.generate_outfit.reset()
+            return
+        self.generate_outfit()
+
+    def save_outfit(self, texture):
+        from kvdroid import activity
+
+        t = time.gmtime()
+        timestamp = time.strftime("%b-%d-%Y_%H:%M:%S", t)
+        cache_dir = join(activity.getCacheDir().getAbsolutePath(), "texture-cache")
+        if not exists(cache_dir):
+            mkdir(cache_dir)
+        image_path = join(cache_dir, f"my-aurafit-{timestamp}.png")
+        self.image_paths.append(image_path)
+        texture.save(image_path, flipped=False)
+
+    # @CallLimiter(max_calls=4, scheduled=True, backoff_base=2)
+    # def generate_outfit(self):
+    #     print("Generating outfit...")
+    #     bundle = self.get_screen_data()
+    #     selfie_gs_url = bundle["selfie_gs_url"]
+    #     selfie_mimetype = bundle["selfie_mimetype"]
+    #     cloth_gs_url = bundle["cloth_gs_url"]
+    #     cloth_mimetype = bundle["cloth_mimetype"]
+    #     prompt = bundle["prompt"]
+    #     prompt_content = (
+    #         Content.Builder()
+    #         .addFileData(cloth_gs_url, cloth_mimetype)
+    #         .addFileData(selfie_gs_url, selfie_mimetype)
+    #         .addText(prompt)
+    #         .build()
+    #     )
+    #     response = self.model.generateContent(prompt_content, [])
+    #     self.future_callback = FutureCallback(
+    #         self.on_generation_success, self.on_generation_failure
+    #     )
+    #     Executor = autoclass("java.util.concurrent.Executors")
+    #     Futures.addCallback(
+    #         response, self.future_callback, Executor.newSingleThreadExecutor()
+    #     )
+
+    @mainthread
+    def on_generation_success(self, result: GenerateContentResponse):
+        response_content = result.getCandidates()[0].getContent()
+        textures = []
+        from kvdroid import activity
+
+        cache_dir = join(activity.getCacheDir().getAbsolutePath(), "texture-cache")
+        if not exists(cache_dir):
+            mkdir(cache_dir)
+        for part in response_content.getParts():
+            if isinstance(part, ImagePart):
+                from kvdroid.tools.kivytools import bitmap_to_texture
+
+                texture = bitmap_to_texture(part.getImage())
+                textures.append(texture)
+
+                t = time.gmtime()
+                timestamp = time.strftime("%b-%d-%Y_%H:%M:%S", t)
+                image_path = join(cache_dir, f"my-aurafit-{timestamp}.png")
+                self.image_paths.append(image_path)
+                print(texture.save(image_path, flipped=False))
+                print(os.listdir(cache_dir))
+                print(os.listdir())
+
+            if isinstance(part, TextPart):
+                text = cast(TextPart, part).getText()
+                print(text)
+
+        print(textures)
+        if not textures and self.ids.style_4.texture is None:
+            self.generate_outfit.decrement()
+            self.generate_outfit()
+            return
+
+        if textures and self.generate_outfit.calls_made() == 1:
+            self.ids.image.texture = textures[0]
+            self.ids.image.export_to_png(join(cache_dir, join(cache_dir, "outfit.png")))
+
+        for i, tex in enumerate(textures):
+            if (self.generate_outfit.calls_made() + i) > 4:
+                continue
+            self.ids[f"style_{self.generate_outfit.calls_made() + i}"].texture = tex
+
+        if hasattr(self.children[0], "is_removable"):
+            self.remove_widget(self.children[0])
+
+        if len(textures) == 4:
+            return
+
+        if self.ids.style_4.texture:
+            return
+
+        self.generate_outfit()
+
+    def on_generation_failure(self, error):
+        error.printStackTrace()
+        print(f"Failed to generate outfit: {error.toString()}")
+        self.toast(error.toString())
+        self.generate_outfit.decrement()
+        self.generate_outfit()
+
+    def download_images(self):
+        from androidstorage4kivy.sharedstorage import SharedStorage
+
+        to_be_deleted = []
+        ss = SharedStorage()
+        for image_path in self.image_paths:
+            print(image_path, exists(image_path))
+            print(ss.copy_to_shared(image_path))
+        for image_path in to_be_deleted:
+            os.remove(image_path)
+            self.image_paths.remove(image_path)
+        self.toast("Images downloaded")
+
+    def share_images(self):
+        from androidstorage4kivy.sharesheet import ShareSheet
+        from kvdroid.jclass.android import Uri
+        from kvdroid.jclass.java import File
+
+        ShareSheet().share_file_list(
+            [Uri().fromFile(File(image_file)) for image_file in self.image_paths]
+        )
+        print("Sharing")
+
+    def on_leave(self, *args):
+        for i in range(1, 5):
+            self.ids[f"style_{i}"].source = ""
+            self.ids[f"style_{i}"].loading_image = ""
+        self.ids.image.loading_image = ""
+        self.ids.image.source = ""
+        if self.in_progress:
+            self.cancel = True
+            print("Cancelling")
+        self.generate_outfit.reset()
+
+    @property
+    def in_progress(self):
+        if self.generate_outfit.in_progress():
+            return True
+        elif self.generate_outfit.calls_made() == 4 and self.ids.style_4.source == "":
+            return True
+        else:
+            return False

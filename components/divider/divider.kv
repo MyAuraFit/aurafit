@@ -1,0 +1,7 @@
+<Divider>
+    canvas:
+        Color:
+            rgba: self.color if self.color else app.theme_cls.text_color[:3] + [.3]
+        Rectangle:
+            size: self.size
+            pos: self.pos

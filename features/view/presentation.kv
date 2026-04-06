@@ -1,0 +1,47 @@
+<ViewScreen>:
+    name: 'view screen'
+    CoverImage:
+        id: image
+        fit_mode: "contain"
+        on_load: root.save_outfit(self.texture)
+    CustomBoxLayout:
+        orientation: "vertical"
+        adaptive_height: True
+        padding: "20dp", 0
+        pos_hint: {"top": 1}
+        IconButton:
+            bg_color: app.theme_cls.card_color
+            icon: "close"
+            radius: self.height / 2
+            font_size: "20sp"
+            pos_hint: {"right": 1}
+            on_release: root.manager.go_back()
+    CustomBoxLayout:
+        id: btn_box
+        adaptive_height: True
+        padding: "20dp"
+        spacing: "10dp"
+        CustomButton:
+            height: "45dp"
+            radius: "16dp"
+            text: f"[font={icon_path}][size={int(sp(18))}]\U000F01DA[/size][/font] Download"
+            markup: True
+            bold: True
+            on_release: root.download_image()
+        CustomButton:
+            size_hint: None, None
+            size: "45dp", "45dp"
+            radius: "16dp"
+            text: f"[font={icon_path}][size={int(sp(18))}]\U000F0497[/size][/font]"
+            markup: True
+            bold: True
+            on_release: root.share_image()
+    CircularProgressIndicator:
+        id: spinner
+        active: False
+        line_width: "1dp"
+        size_hint: None, None
+        size: "40dp", "40dp"
+        pos_hint: {"center": [.5, .5]}
+
+

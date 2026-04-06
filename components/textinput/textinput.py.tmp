@@ -1,0 +1,68 @@
+__all__ = ("CustomTextInput",)
+
+from emoji import is_emoji
+from kivy import platform
+
+# from kivy.graphics.opengl import glGetIntegerv, GL_MAX_TEXTURE_SIZE
+from kivy.lang import Builder
+from os.path import join, dirname, basename
+from kivy.properties import (
+    VariableListProperty,
+    ColorProperty,
+    NumericProperty,
+    AliasProperty,
+    BooleanProperty,
+    OptionProperty,
+)
+from kivy.uix.textinput import TextInput
+
+# from kivy.uix.label import Label
+# from kivy.clock import triggered
+
+Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+
+# lbl = Label(text="a")  # Dummy label to calculate texture size
+
+
+class CustomTextInput(TextInput):
+    radius = VariableListProperty(0)
+    bg_color = ColorProperty(None)
+    keyboard_suggestions = BooleanProperty(True)
+    input_type = OptionProperty(
+        "null",
+        options=("null", "text", "number", "url", "mail", "datetime", "tel", "address"),
+    )
+
+    # def get_max_characters(self):
+    #     lbl.font_size = self.font_size
+    #     lbl.font_name = self.font_name
+    #     lbl.texture_update()
+    #     char_width, char_height = lbl.texture.size
+    #     max_texture_size = glGetIntegerv(GL_MAX_TEXTURE_SIZE)[0]
+    #     total_characters = (max_texture_size // char_width) + (
+    #         max_texture_size // char_height
+    #     )
+    #     return total_characters
+    #
+    # max_characters = AliasProperty(
+    #     get_max_characters, None, bind=["font_size", "font_name"], cache=True
+    # )
+
+    # def on_touch_down(self, touch):
+    #     if not self.collide_point(*touch.pos):
+    #         self.focus = False
+    #     super().on_touch_down(touch)#
+
+    # @triggered(0.1)
+    # def _bind_keyboard(self):
+    #     super()._bind_keyboard()
+
+    def insert_text(self, substring, from_undo=False):
+        if is_emoji(substring):
+            if platform == "android":
+                from kvdroid.tools import toast
+
+                toast("emojis are not supported")
+            return None
+        else:
+            return super().insert_text(substring, from_undo=from_undo)

@@ -1,0 +1,28 @@
+<IconButton>:
+    size: "40dp", "40dp"
+    text_size: self.size
+    halign: "center"
+    valign: "center"
+    radius: self.height / 2
+
+
+<CustomButton>:
+    -text_size: None, None
+    -color: app.theme_cls.text_color_dark if app.theme_cls.theme_style == "Light" else app.theme_cls.text_color_light
+    bg_color: self.background_color if self.background_color else app.theme_cls.primary_color
+
+<CustomToggleButton>
+    -text_size: None, None
+    allow_no_selection: False
+    color:
+        (self.color_down if self.color_down else app.theme_cls.text_color_dark)\
+        if self.active else \
+        (self.color_normal if self.color_normal else app.theme_cls.text_color)
+    bg_color:
+        (self.background_down if self.background_down else app.theme_cls.primary_color)\
+        if self.active else \
+        (self.background_normal if self.background_normal else app.theme_cls.transparent_color)
+#    shadow_color:
+#        (self.shadow_down if self.shadow_down else app.theme_cls.shadow_color)\
+#        if self.active else \
+#        (self.shadow_normal if self.shadow_normal else app.theme_cls.transparent_color)

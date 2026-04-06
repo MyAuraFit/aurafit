@@ -1,0 +1,27 @@
+<VehicleList>
+    size_hint_y: None
+    height: "82dp"
+    spacing: "20dp"
+    padding: "15dp"
+    canvas:
+        Color:
+            rgba: app.theme_cls.accent_color
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(15)]
+    CoverImage:
+        size_hint_x: None
+        width: self.height
+        radius: self.height / 2
+        source: "assets/images/car.jpg"
+    BoxLayout:
+        orientation: "vertical"
+        CustomLabel:
+            font_size: "14sp"
+            text: "{} {} ({})".format(root.make, root.model, root.year)
+            bold: True
+            shorten: True
+        CustomLabel:
+            font_size: "14sp"
+            text: "{} ({})".format(root.plate_number, root.color)

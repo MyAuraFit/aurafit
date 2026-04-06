@@ -1,0 +1,159 @@
+<UploadScreen>
+    name: "upload screen"
+    BoxLayout:
+        orientation: "vertical"
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp", "10dp"
+            IconButton:
+                icon: "close"
+                radius: self.height / 2
+                bg_color: app.theme_cls.card_color
+                pos_hint: {"center_y": .5}
+                size: "35dp", "35dp"
+                font_size: "20sp"
+                on_release: root.manager.go_back()
+            CustomBoxLayout:
+                adaptive_height: True
+                orientation: "vertical"
+                pos_hint: {"center_y": .5}
+                CustomLabel:
+                    id: title
+                    folder: ""
+                    text: "Upload {}".format(self.folder)
+                    adaptive_height: True
+                    bold: True
+                    font_size: "17sp"
+                    halign: "center"
+                CustomLabel:
+                    count: len(grid.children)
+                    text: "{} items selected".format(self.count)
+                    adaptive_height: True
+                    font_size: "13sp"
+                    halign: "center"
+            IconButton:
+                icon: "plus"
+                radius: self.height / 2
+                bg_color: app.theme_cls.card_color
+                pos_hint: {"center_y": .5}
+                size: "35dp", "35dp"
+                font_size: "20sp"
+                on_release: root.pop_create_selection_sheet()
+        LinearProgressIndicator:
+            id: progress_bar
+            track_color: app.theme_cls.transparent_color
+            max: len(grid.children)
+            size_hint_y: None
+            height: "2dp"
+        ScrollView:
+            bar_width: 0
+            do_scroll_x: False
+            scroll_distance: 0
+            effect_cls: ScrollEffect
+            GridLayout:
+                id: grid
+                cols: 2
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "20dp"
+                padding: "20dp"
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp"
+            bg_color: app.theme_cls.bg_color
+            CustomButton:
+                adaptive_width: True
+                padding: "20dp", 0
+                pos_hint: {"center_x": .5}
+                size_hint_y: None
+                height: "45dp"
+                radius: self.height / 2
+                text: "Cancel"
+                color: app.theme_cls.text_color
+                bold: True
+                bg_color: app.theme_cls.transparent_color
+            Widget:
+            CustomButton:
+                id: upload_btn
+                adaptive_width: True
+                padding: "40dp", 0
+                pos_hint: {"center_x": .5}
+                size_hint_y: None
+                height: "45dp"
+                radius: "16dp"
+                text: "Upload"
+                bold: True
+                opacity: .4 if self.disabled else 1
+                ripple_duration_in: 0
+                ripple_duration_out: 0
+                ripple_fade_from_alpha: 0
+                ripple_fade_to_alpha: 0
+                on_release: root.upload_images()
+
+
+<UploadSelectionSheet>
+    IconButton:
+        icon: "close"
+        pos_hint: {"right": 1}
+        size: "35dp", "35dp"
+        font_size: "18sp"
+        on_release: root.dismiss()
+    CustomButton:
+        size_hint_y: None
+        height: "50dp"
+        text: "Select from photos"
+        font_size: "17sp"
+        bold: True
+        pos_hint: {"center_y": .5}
+        text_size: self.width, None
+        -bg_color: app.theme_cls.transparent_color
+        color: app.theme_cls.text_color
+        halign: "left"
+        on_release: root.open_photo_picker()
+    CustomButton:
+        size_hint_y: None
+        height: "50dp"
+        text: "Take photo"
+        font_size: "17sp"
+        bold: True
+        pos_hint: {"center_y": .5}
+        text_size: self.width, None
+        color: app.theme_cls.text_color
+        -bg_color: app.theme_cls.transparent_color
+        line_width: 1
+        halign: "left"
+        on_release: root.take_photo()
+
+<WardrobeImage@CustomBoxLayout>
+    radius: "16dp"
+    size_hint_y: None
+    height: self.width
+    source: ""
+    status: "idle"
+    RelativeLayout:
+        CoverImage:
+            radius: root.radius
+            source: root.source
+        IconButton:
+            id: delete_btn
+            icon: "trash-can-outline"
+            bg_color: 0, 0, 0, 0.5
+            adaptive_size: True
+            color: app.theme_cls.bg_color
+            padding: "10dp"
+            font_size: "16sp"
+            pos_hint: {"top": .93, "right": .93}
+            disabled: root.status == "uploading"
+            opacity: 0 if root.status == "uploading" else 1
+        DialogScrim:
+            opacity: 1 if root.status == "uploading" else 0
+            radius: "16dp"
+            disable_touch_behind: False if root.status == "uploading" else True
+        CircularProgressIndicator:
+            id: spinner
+            active: True if root.status == "uploading" else False
+            size_hint: None, None
+            color: app.theme_cls.bg_color
+            size: "30dp", "30dp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            line_width: "1.5dp"
