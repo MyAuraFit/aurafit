@@ -71,19 +71,19 @@
                     id: style_1
                     active: True
                     root: root
-                    on_active: if args[1]: image.texture = self.texture
+                    on_active: if args[1]: image.texture = self.ids.img.texture
                 Style:
                     id: style_2
                     root: root
-                    on_active: if args[1]: image.texture = self.texture
+                    on_active: if args[1]: image.texture = self.ids.img.texture
                 Style:
                     id: style_3
                     root: root
-                    on_active: if args[1]: image.texture = self.texture
+                    on_active: if args[1]: image.texture = self.ids.img.texture
                 Style:
                     id: style_4
                     root: root
-                    on_active: if args[1]: image.texture = self.texture
+                    on_active: if args[1]: image.texture = self.ids.img.texture
         CustomBoxLayout:
             adaptive_height: True
             padding: "20dp", 0
@@ -136,6 +136,7 @@
     root: None
     RelativeLayout:
         CoverImage:
+            id: img
             source: root.source
             loading_image: root.loading_image
             radius: "20dp"
@@ -154,8 +155,8 @@
     IconButton:
         icon: "close"
         on_release:
-            root.parent.remove_widget(root)
             root.parent.manager.go_back()
+            root.parent.remove_widget(root)
     CustomLabel:
         id: lbl
         halign: "center"

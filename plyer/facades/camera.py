@@ -1,4 +1,4 @@
-'''
+"""
 Camera
 ======
 
@@ -39,16 +39,16 @@ Supported Platforms
 -------------------
 Android, iOS
 
-'''
+"""
 
 
 class Camera:
-    '''
+    """
     Camera facade.
-    '''
+    """
 
     def take_picture(self, filename, on_complete):
-        '''Ask the OS to capture a picture, and store it at filename.
+        """Ask the OS to capture a picture, and store it at filename.
 
         When the capture is done, on_complete will be called with the filename
         as an argument. If the callback returns True, the filename will be
@@ -60,11 +60,11 @@ class Camera:
 
         :type filename: str
         :type on_complete: callable
-        '''
+        """
         self._take_picture(filename=filename, on_complete=on_complete)
 
     def take_video(self, filename, on_complete):
-        '''Ask the OS to capture a video, and store it at filename.
+        """Ask the OS to capture a video, and store it at filename.
 
         When the capture is done, on_complete will be called with the filename
         as an argument. If the callback returns True, the filename will be
@@ -76,7 +76,7 @@ class Camera:
 
         :type filename: str
         :type on_complete: callable
-        '''
+        """
         self._take_video(filename=filename, on_complete=on_complete)
 
     # private

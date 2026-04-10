@@ -1,5 +1,5 @@
+from android.runnable import run_on_ui_thread  # noqa
 from kivy.clock import Clock
-
 from sjadmob.jclass import (
     MobileAds,
     AdRequest,
@@ -12,7 +12,7 @@ from sjadmob.jinterface import (
     RewardedAdLoadListener,
     OnUserEarnedRewardListener,
 )
-from android.runnable import run_on_ui_thread  # noqa
+
 from kvdroid import activity
 from kvdroid.tools import toast
 

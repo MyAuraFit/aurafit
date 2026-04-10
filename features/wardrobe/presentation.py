@@ -1,6 +1,6 @@
 __all__ = ("WardrobeScreen",)
 
-from os.path import join, dirname, basename
+from pathlib import Path
 
 from jnius import autoclass
 from kivy.lang import Builder
@@ -12,7 +12,8 @@ from components.divider import Divider
 from features.basescreen import BaseScreen
 from sjfirebase.tools.mixin import FirestoreMixin, UserMixin
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class WardrobeScreen(BaseScreen, FirestoreMixin, UserMixin):

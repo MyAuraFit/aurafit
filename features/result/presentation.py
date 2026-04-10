@@ -3,7 +3,8 @@ __all__ = ("ResultScreen",)
 import shutil
 import time
 from os import mkdir
-from os.path import join, dirname, basename, exists
+from os.path import join, exists
+from pathlib import Path
 
 from kivy.animation import Animation
 from kivy.clock import mainthread
@@ -14,7 +15,8 @@ from features.basescreen import BaseScreen
 from libs.throttle import CallLimiter
 from sjfirebase.tools.mixin import FunctionMixin
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class ResultScreen(BaseScreen, FunctionMixin):

@@ -1,7 +1,12 @@
-from android.activity import bind as activity_bind  # noqa
-from android.runnable import run_on_ui_thread  # noqa
+import secrets
+import time
+from os.path import basename
+from pathlib import Path
+
 from jnius import autoclass, cast, JavaException
 
+from android.activity import bind as activity_bind  # noqa
+from android.runnable import run_on_ui_thread  # noqa
 from kvdroid import activity
 from kvdroid.jclass.android import WindowManagerLayoutParams, BitmapFactory
 from libs.jinterface.location import FusedLocationCallback
@@ -169,3 +174,14 @@ class gps:
 def set_soft_input_adjust_nothing():
     window = activity.getWindow()
     window.setSoftInputMode(WindowManagerLayoutParams().SOFT_INPUT_ADJUST_NOTHING)
+
+
+def get_filename(filename=None):
+    from kvdroid import activity
+
+    cache_path = activity.getExternalCacheDir().getAbsolutePath()
+    if not filename:
+        t = time.gmtime()
+        timestamp = time.strftime("%b-%d-%Y_%H:%M:%S", t)
+        return Path(cache_path, f"aurafit-{secrets.token_urlsafe(4)}-{timestamp}.png")
+    return Path(cache_path, basename(filename))

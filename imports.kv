@@ -4,6 +4,7 @@
 #:import StretchOverScrollStencil components.effects.StretchOverScrollStencil
 #:import SharedAxisTransition components.transition.SharedAxisTransition
 #:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import ToggleButtonBehavior  kivy.uix.behaviors.togglebutton.ToggleButtonBehavior
 #:import gcfh kivy.utils.get_color_from_hex
 #:import Window kivy.core.window.Window
 #:import shorten_text libs.shorten_text
@@ -280,50 +281,15 @@
         color: app.theme_cls.text_color[:3] + [.7]
         halign: "center"
 
-<PurchaseNoticeSheet>
-    IconButton:
-        radius: self.height / 2
-        icon: "close"
-        pos_hint: {"right": 1}
-        on_release: root.go_back_home()
-    CustomLabel:
-        adaptive_height: True
-        font_size: "32sp"
-        text: "Notice"
-        bold: True
-        halign: "center"
-    CustomLabel:
-        adaptive_height: True
-        font_size: "14sp"
-        text:
-            "You are not subscribed to Farmi-AI. For you to continue, " \
-            "you either purchase a subscription or watch an ads video every 5 minutes. "\
-            "We recommend you purchase a subscription to enjoy all the features of " \
-            "Farmi-AI with up to 14 days free trial. You can manage and cancel your " \
-            "subscriptions in settings in the google Google play store."
-        color: app.theme_cls.text_color[:3] + [.7]
-        halign: "center"
-    CustomButton:
-        size_hint_y: None
-        height: "45dp"
-        radius: self.height / 2
-        text: f"Subscribe [font={icon_path}][size={int(sp(24))}]\U000F01A5[/size][/font]"
-        markup: True
-        bold: True
-        on_release: root.subscribe()
-    CustomButton:
-        size_hint_y: None
-        height: "45dp"
-        radius: self.height / 2
-        text: "Watch ADS"
-        color: app.theme_cls.text_color
-        bold: True
-        -bg_color: app.theme_cls.card_color
-        disabled: spinner.active
-        on_release: root.watch_ads()
-        CircularProgressIndicator:
-            id: spinner
-            active: False
-            size: "20dp", "20dp"
-            pos: self.parent.width - dp(20), self.parent.y + ((self.parent.height / 2) - (self.height / 2))
-            line_width: 2
+<MoodOccasionButton@ToggleButtonBehavior+CustomLabel>:
+    adaptive_size: True
+    padding: "7dp", "5dp"
+    pos_hint: {"center_x": .5}
+    radius: "7dp"
+    font_size: "11sp"
+    color: app.theme_cls.bg_color if self.active else app.theme_cls.text_color
+    bold: True
+    bg_color: app.theme_cls.primary_color if self.active else app.theme_cls.bg_color
+    shadow_color: app.theme_cls.shadow_color
+    line_color: app.theme_cls.text_color[:3] + [.3]
+    spread_radius: -dp(3), -dp(3)

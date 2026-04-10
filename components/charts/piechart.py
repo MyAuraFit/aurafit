@@ -1,12 +1,20 @@
 __all__ = ("PieChart",)
 
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse, Rectangle, Line, Triangle
-from kivy.uix.label import Label
-from kivy.properties import DictProperty, ListProperty, NumericProperty, ColorProperty, OptionProperty, StringProperty, \
-    BooleanProperty
-from kivy.utils import get_color_from_hex
 import math
+
+from kivy.graphics import Color, Ellipse, Rectangle, Line, Triangle
+from kivy.properties import (
+    DictProperty,
+    ListProperty,
+    NumericProperty,
+    ColorProperty,
+    OptionProperty,
+    StringProperty,
+    BooleanProperty,
+)
+from kivy.uix.label import Label
+from kivy.uix.widget import Widget
+from kivy.utils import get_color_from_hex
 
 
 class PieChart(Widget):
@@ -14,7 +22,7 @@ class PieChart(Widget):
     PieChart Widget
 
     A base class for creating pie charts with legends and percentage labels.
-    This class provides various customization options for fonts, colors, legends, 
+    This class provides various customization options for fonts, colors, legends,
     and percentage label positioning.
 
     Attributes:
@@ -89,12 +97,14 @@ class PieChart(Widget):
     percentage_font_size = NumericProperty(14)
     percentage_distance_factor = NumericProperty(0.5)
     show_legend = BooleanProperty(False)
-    legend_valign = OptionProperty('center', options=['top', 'bottom', 'center'])
-    legend_position = OptionProperty('left', options=['left', 'right'])
+    legend_valign = OptionProperty("center", options=["top", "bottom", "center"])
+    legend_position = OptionProperty("left", options=["left", "right"])
     legend_label_color = ColorProperty((0, 0, 0, 1))
     legend_label_font_size = NumericProperty(14)
-    legend_key_shape = OptionProperty('circle', options=['circle', 'square', 'diamond', 'hexagon', 'star'])
-    legend_key_style = OptionProperty('filled', options=['filled', 'outlined'])
+    legend_key_shape = OptionProperty(
+        "circle", options=["circle", "square", "diamond", "hexagon", "star"]
+    )
+    legend_key_style = OptionProperty("filled", options=["filled", "outlined"])
     no_data_text = StringProperty("No data available")
     no_data_font_size = NumericProperty(20)
     no_data_text_color = ColorProperty((0, 0, 0, 1))
@@ -104,10 +114,17 @@ class PieChart(Widget):
         Initializes the PieChart with default properties and binds updates to property changes.
         """
         super().__init__(**kwargs)
-        self.bind(pos=self.update_chart, size=self.update_chart, data=self.update_chart,
-                  colors=self.update_chart, percentage_distance_factor=self.update_chart,
-                  legend_position=self.update_chart, legend_valign=self.update_chart,
-                  legend_key_shape=self.update_chart, legend_key_style=self.update_chart)
+        self.bind(
+            pos=self.update_chart,
+            size=self.update_chart,
+            data=self.update_chart,
+            colors=self.update_chart,
+            percentage_distance_factor=self.update_chart,
+            legend_position=self.update_chart,
+            legend_valign=self.update_chart,
+            legend_key_shape=self.update_chart,
+            legend_key_style=self.update_chart,
+        )
 
     def update_chart(self, *args):
         """
@@ -141,7 +158,7 @@ class PieChart(Widget):
                 no_data_label.size = (label_width, label_height)
                 no_data_label.pos = (
                     center_x - label_width / 2,
-                    center_y - label_height / 2
+                    center_y - label_height / 2,
                 )
 
                 # Add to widget tree
@@ -158,7 +175,7 @@ class PieChart(Widget):
             legend_width = self.width / 3
             chart_width = 2 * self.width / 3
 
-            if self.legend_position == 'right':
+            if self.legend_position == "right":
                 legend_x = self.x + chart_width + 10
                 chart_center_x = self.x + chart_width / 2
             else:  # legend_position == 'left'
@@ -174,12 +191,17 @@ class PieChart(Widget):
             total_legend_height = num_items * legend_item_height
 
             # Determine the starting y position based on legend alignment
-            if self.legend_valign == 'top':
+            if self.legend_valign == "top":
                 legend_y = self.top - 30
-            elif self.legend_valign == 'bottom':
+            elif self.legend_valign == "bottom":
                 legend_y = self.y + total_legend_height
-            elif self.legend_valign == 'center':
-                legend_y = self.y + (self.height - total_legend_height) / 2 + total_legend_height - legend_item_height
+            elif self.legend_valign == "center":
+                legend_y = (
+                    self.y
+                    + (self.height - total_legend_height) / 2
+                    + total_legend_height
+                    - legend_item_height
+                )
         else:
             # Without legend: Use full width for chart
             chart_width = self.width
@@ -203,18 +225,23 @@ class PieChart(Widget):
             # Draw pie segment
             with self.canvas:
                 Color(*segment_color)
-                Ellipse(pos=(chart_center_x - chart_radius, center_y - chart_radius),
-                        size=(2 * chart_radius, 2 * chart_radius),
-                        angle_start=start_angle, angle_end=start_angle + angle)
+                Ellipse(
+                    pos=(chart_center_x - chart_radius, center_y - chart_radius),
+                    size=(2 * chart_radius, 2 * chart_radius),
+                    angle_start=start_angle,
+                    angle_end=start_angle + angle,
+                )
 
             # Store segment information for label positioning
-            segments.append({
-                'label': label,
-                'percentage': percentage,
-                'start_angle': start_angle,
-                'end_angle': start_angle + angle,
-                'color': segment_color
-            })
+            segments.append(
+                {
+                    "label": label,
+                    "percentage": percentage,
+                    "start_angle": start_angle,
+                    "end_angle": start_angle + angle,
+                    "color": segment_color,
+                }
+            )
 
             # Update the start angle for the next segment
             start_angle += angle
@@ -222,9 +249,15 @@ class PieChart(Widget):
         # Second pass: Add percentage labels
         for segment in segments:
             # Calculate label position for the percentage
-            mid_angle = math.radians((segment['start_angle'] + segment['end_angle']) / 2)
-            label_x = chart_center_x + (chart_radius * self.percentage_distance_factor) * math.sin(mid_angle)
-            label_y = center_y + (chart_radius * self.percentage_distance_factor) * math.cos(mid_angle)
+            mid_angle = math.radians(
+                (segment["start_angle"] + segment["end_angle"]) / 2
+            )
+            label_x = chart_center_x + (
+                chart_radius * self.percentage_distance_factor
+            ) * math.sin(mid_angle)
+            label_y = center_y + (
+                chart_radius * self.percentage_distance_factor
+            ) * math.cos(mid_angle)
 
             # Add percentage label
             percentage_label = Label(
@@ -241,7 +274,9 @@ class PieChart(Widget):
 
             # Draw legend
             if self.show_legend:
-                self.draw_legend_item(legend_x, legend_y, segment['color'], segment['label'])
+                self.draw_legend_item(
+                    legend_x, legend_y, segment["color"], segment["label"]
+                )
                 legend_y -= legend_item_height  # Move to the next legend item position
 
     def get_color(self, index):
@@ -259,7 +294,14 @@ class PieChart(Widget):
             RGBA color tuple for the segment.
         """
         default_colors = [
-            "#ffd92f", "#a6d854", "#e78ac3", "#8da0cb", "#fc8d62", "#66c2a5", "#d0d0d0", "#ffb8bc"
+            "#ffd92f",
+            "#a6d854",
+            "#e78ac3",
+            "#8da0cb",
+            "#fc8d62",
+            "#66c2a5",
+            "#d0d0d0",
+            "#ffb8bc",
         ]
         if self.colors:
             color = self.colors[index % len(self.colors)]
@@ -287,34 +329,40 @@ class PieChart(Widget):
         with self.canvas:
             Color(*color)
 
-            if self.legend_key_shape == 'square':
-                if self.legend_key_style == 'filled':
+            if self.legend_key_shape == "square":
+                if self.legend_key_style == "filled":
                     Rectangle(pos=(x, y), size=(10, 10))
                 else:
                     Line(rectangle=(x, y, 15, 15), width=1.5)
-            elif self.legend_key_shape == 'circle':
-                if self.legend_key_style == 'filled':
+            elif self.legend_key_shape == "circle":
+                if self.legend_key_style == "filled":
                     Ellipse(pos=(x, y), size=(15, 15))
                 else:
                     Line(circle=(x + 10, y + 10, 10), width=1.5)
-            elif self.legend_key_shape == 'diamond':
-                self.draw_polygon(x + 10, y + 10, 10, 4, filled=(self.legend_key_style == 'filled'))
-            elif self.legend_key_shape == 'hexagon':
-                self.draw_polygon(x + 10, y + 10, 10, 6, filled=(self.legend_key_style == 'filled'))
-            elif self.legend_key_shape == 'star':
-                self.draw_star(x + 10, y + 10, 10, 5, filled=(self.legend_key_style == 'filled'))
+            elif self.legend_key_shape == "diamond":
+                self.draw_polygon(
+                    x + 10, y + 10, 10, 4, filled=(self.legend_key_style == "filled")
+                )
+            elif self.legend_key_shape == "hexagon":
+                self.draw_polygon(
+                    x + 10, y + 10, 10, 6, filled=(self.legend_key_style == "filled")
+                )
+            elif self.legend_key_shape == "star":
+                self.draw_star(
+                    x + 10, y + 10, 10, 5, filled=(self.legend_key_style == "filled")
+                )
 
-        # Add legend label 
+        # Add legend label
         legend_label = Label(
             text=f"{label}",
             font_size=self.legend_label_font_size,
             color=self.legend_label_color,
             font_name=self.font_name,
             size_hint=(None, None),
-            size=(200, 20)
+            size=(200, 20),
         )
         # Adjust alignment settings
-        legend_label.halign = 'left'
+        legend_label.halign = "left"
         legend_label.text_size = legend_label.size
         legend_label.pos = (x + 30, y)
         self.add_widget(legend_label)
@@ -352,7 +400,9 @@ class PieChart(Widget):
                     # Create triangles from center to each edge
                     p1 = points[i]
                     p2 = points[(i + 1) % sides]
-                    self.canvas.add(Triangle(points=(cx, cy, p1[0], p1[1], p2[0], p2[1])))
+                    self.canvas.add(
+                        Triangle(points=(cx, cy, p1[0], p1[1], p2[0], p2[1]))
+                    )
         else:
             # Draw outlined polygon using lines
             with self.canvas:
@@ -384,7 +434,9 @@ class PieChart(Widget):
         star_points = []
 
         for i in range(2 * points):
-            r = radius if i % 2 == 0 else radius / 2  # Alternate between outer and inner radius
+            r = (
+                radius if i % 2 == 0 else radius / 2
+            )  # Alternate between outer and inner radius
             angle = i * angle_step
             x = cx + r * math.sin(angle)
             y = cy + r * math.cos(angle)
@@ -397,7 +449,9 @@ class PieChart(Widget):
                     # Create triangles from center to each star point
                     p1 = star_points[i]
                     p2 = star_points[(i + 1) % (2 * points)]
-                    self.canvas.add(Triangle(points=(cx, cy, p1[0], p1[1], p2[0], p2[1])))
+                    self.canvas.add(
+                        Triangle(points=(cx, cy, p1[0], p1[1], p2[0], p2[1]))
+                    )
         else:
             # Draw outlined star using lines
             with self.canvas:
@@ -425,7 +479,7 @@ class DonutChart(PieChart):
     percentage_distance_factor : NumericProperty
         Automatically calculated to position percentage labels between the donut hole and the edge of the chart.
         Users can override this if needed.
-        
+
     center_text : StringProperty
         Text to display in the center of the donut hole. Defaults to empty string.
 
@@ -469,7 +523,7 @@ class DonutChart(PieChart):
         self.bind(
             donut_radius=self.update_chart,
             donut_hole_color=self.update_chart,
-            center_text=self.update_chart
+            center_text=self.update_chart,
         )
 
     def update_chart(self, *args):
@@ -504,7 +558,7 @@ class DonutChart(PieChart):
             legend_width = self.width / 3
             chart_width = 2 * self.width / 3
 
-            if self.legend_position == 'right':
+            if self.legend_position == "right":
                 chart_center_x = self.x + chart_width / 2
             else:  # legend_position == 'left'
                 chart_center_x = self.x + legend_width + (chart_width / 2)
@@ -524,8 +578,10 @@ class DonutChart(PieChart):
         # Draw the hole
         with self.canvas:
             Color(*self.donut_hole_color)
-            Ellipse(pos=(chart_center_x - hole_radius, center_y - hole_radius),
-                    size=(2 * hole_radius, 2 * hole_radius))
+            Ellipse(
+                pos=(chart_center_x - hole_radius, center_y - hole_radius),
+                size=(2 * hole_radius, 2 * hole_radius),
+            )
 
         # Add center text if provided
         if self.center_text:
@@ -540,8 +596,8 @@ class DonutChart(PieChart):
                 color=self.center_text_color,
                 size_hint=(None, None),
                 size=(max_text_width, 2 * hole_radius),
-                halign='center',
-                valign='center'
+                halign="center",
+                valign="center",
             )
 
             # Enable text wrapping
@@ -552,7 +608,9 @@ class DonutChart(PieChart):
             # Position the label in the center of the hole
             center_text_label.pos = (
                 chart_center_x - max_text_width / 2,
-                center_y - hole_radius + (2 * hole_radius - center_text_label.height) / 2
+                center_y
+                - hole_radius
+                + (2 * hole_radius - center_text_label.height) / 2,
             )
 
             self.add_widget(center_text_label)

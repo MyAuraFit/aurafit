@@ -62,8 +62,6 @@ Usage
 
 __all__ = ("TouchBehavior",)
 
-from functools import partial
-
 from kivy.clock import Clock
 from kivy.properties import NumericProperty
 
@@ -78,18 +76,16 @@ class TouchBehavior:
     """
 
     def __init__(self, *args, **kwargs):
-        self.register_event_type('on_double_tap')
-        self.register_event_type('on_triple_tap')
-        self.register_event_type('on_long_touch')
+        self.register_event_type("on_double_tap")
+        self.register_event_type("on_triple_tap")
+        self.register_event_type("on_long_touch")
         super().__init__(*args, **kwargs)
-        self.bind(
-            on_touch_down=self.create_clock, on_touch_up=self.delete_clock
-        )
+        self.bind(on_touch_down=self.create_clock, on_touch_up=self.delete_clock)
 
     def create_clock(self, _, touch, *args):
         if self.collide_point(touch.x, touch.y):
             if self not in touch.ud:
-                callback = lambda x=touch: self.dispatch('on_long_touch', x)
+                callback = lambda x=touch: self.dispatch("on_long_touch", x)
                 Clock.schedule_once(callback, self.duration_long_touch)
                 touch.ud[self] = callback
 

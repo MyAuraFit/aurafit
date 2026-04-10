@@ -1,18 +1,25 @@
 __all__ = ("AutofitScreen",)
 
-from os.path import join, dirname, basename
+from pathlib import Path
 
 from kivy.lang import Builder
 
+from components.sheet.sheet import MoodOccasionSelectionSheet
 from features.basescreen import BaseScreen, ScreenData
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class AutofitScreen(BaseScreen):
     def generate_my_aurafit(self):
         screen_data = ScreenData()
         screen_data.setdefault("type", "autofit")
-        screen_data.setdefault("prompt", self.ids.text_input.text)
+        screen_data.setdefault("mood", self.ids.mood_text_input.text)
+        screen_data.setdefault("occasion", self.ids.occasion_text_input.text)
+        screen_data.setdefault("time_of_day", self.ids.time_sv_box.text)
         self.manager.switch_screen("result screen", screen_data=screen_data)
-        self.ids.text_input.text = ""
+
+    def pop_mood_occasion_selection_sheet(self, group, title):
+        sheet = MoodOccasionSelectionSheet(screen=self, group=group, title=title)
+        sheet.open()

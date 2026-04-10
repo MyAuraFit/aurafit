@@ -1,14 +1,17 @@
 __all__ = ("Gradient",)
 
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.widget import Widget
-from kivy.graphics import RenderContext
-from kivy.core.window import Window
 from kivy.clock import mainthread
-from kivy.properties import NumericProperty, ListProperty, BooleanProperty, ColorProperty
+from kivy.core.window import Window
+from kivy.graphics import RenderContext
+from kivy.properties import (
+    NumericProperty,
+    BooleanProperty,
+    ColorProperty,
+)
+from kivy.uix.widget import Widget
 
-shader_code = '''
+shader_code = """
 #ifdef GL_ES
     precision highp float;
 #endif
@@ -52,7 +55,7 @@ void main() {
 
     gl_FragColor = finalColor;
 }
-'''
+"""
 
 
 class Gradient(Widget):
@@ -89,15 +92,15 @@ class Gradient(Widget):
     #     self.canvas['u_resolution'] = list(map(float, self.size))
 
     def _update_shader(self, *args):
-        self.canvas['u_angle'] = float(self.angle)
-        self.canvas['u_color_start'] = list(map(float, self.color_start))
-        self.canvas['u_color_end'] = list(map(float, self.color_end))
-        self.canvas['u_circular'] = int(self.circular)
-        self.canvas['u_resolution'] = list(map(float, self.size))
-        self.canvas['u_position'] = list(map(float, self.pos))
+        self.canvas["u_angle"] = float(self.angle)
+        self.canvas["u_color_start"] = list(map(float, self.color_start))
+        self.canvas["u_color_end"] = list(map(float, self.color_end))
+        self.canvas["u_circular"] = int(self.circular)
+        self.canvas["u_resolution"] = list(map(float, self.size))
+        self.canvas["u_position"] = list(map(float, self.pos))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from kivy.graphics import Rectangle
 
     class ShaderGradientApp(App):
@@ -105,7 +108,7 @@ if __name__ == '__main__':
             d = Gradient()
             with d.canvas:
                 rect = Rectangle(size=Window.size, pos=(0, 0))
-            Window.bind(size=lambda _, s: setattr(rect, 'size', s))
+            Window.bind(size=lambda _, s: setattr(rect, "size", s))
             return d
 
     ShaderGradientApp().run()

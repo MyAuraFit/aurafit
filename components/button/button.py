@@ -1,12 +1,19 @@
-__all__ = ('IconButton', 'CustomButton', 'CustomToggleButton')
+__all__ = ("IconButton", "CustomButton", "CustomToggleButton")
 
-from kivy.properties import ColorProperty
-from kivy.uix.behaviors import TouchRippleButtonBehavior, TouchRippleBehavior, ToggleButtonBehavior
+from pathlib import Path
+
 from kivy.lang import Builder
-from os.path import join, dirname, basename
+from kivy.properties import ColorProperty
+from kivy.uix.behaviors import (
+    TouchRippleButtonBehavior,
+    TouchRippleBehavior,
+    ToggleButtonBehavior,
+)
+
 from components.label import Icon, CustomLabel
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class IconButton(TouchRippleButtonBehavior, Icon):

@@ -2,17 +2,18 @@ from datetime import datetime
 from os import makedirs
 from os.path import join, exists
 from shutil import rmtree
-
-import requests
 from urllib.parse import urlencode
 
+import requests
 from kivy import platform
 from kivy.storage.dictstore import DictStore
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 
-def create_google_maps_session(api_key, map_type="roadmap", language="en-US", region="NG", styles=None):
+def create_google_maps_session(
+    api_key, map_type="roadmap", language="en-US", region="NG", styles=None
+):
     """
     Creates a session with Google Maps using the Tile API.
 
@@ -48,7 +49,7 @@ def create_google_maps_session(api_key, map_type="roadmap", language="en-US", re
     """
     url = f"https://tile.googleapis.com/v1/createSession?key={api_key}"
     headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
     }
 
     data = {
@@ -64,8 +65,8 @@ def create_google_maps_session(api_key, map_type="roadmap", language="en-US", re
     session = requests.Session()
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     adapter = HTTPAdapter(max_retries=retries)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
 
     while True:
         try:
@@ -92,11 +93,7 @@ def generate_tiles_api_url(api_key, session_token, orientation=0):
     base_url = "https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}"
 
     # Create the query parameters
-    params = {
-        'session': session_token,
-        'key': api_key,
-        'orientation': orientation
-    }
+    params = {"session": session_token, "key": api_key, "orientation": orientation}
 
     # Encode the parameters
     query_string = urlencode(params)
@@ -108,7 +105,14 @@ def generate_tiles_api_url(api_key, session_token, orientation=0):
     return full_url
 
 
-def create_map_tile_url(api_key, map_type="roadmap", language="en-US", region="NG", styles=None, orientation=0):
+def create_map_tile_url(
+    api_key,
+    map_type="roadmap",
+    language="en-US",
+    region="NG",
+    styles=None,
+    orientation=0,
+):
     """
     Creates a map tile URL by generating a Google Maps session and formatting the tile URL.
 
@@ -123,7 +127,9 @@ def create_map_tile_url(api_key, map_type="roadmap", language="en-US", region="N
     Returns:
         str: The formatted URL for the Google Tiles API.
     """
-    session_response = create_google_maps_session(api_key, map_type, language, region, styles)
+    session_response = create_google_maps_session(
+        api_key, map_type, language, region, styles
+    )
     session_token = session_response["session"]
     return generate_tiles_api_url(api_key, session_token, orientation)
 
@@ -140,24 +146,17 @@ def load_google_map_session():
     if not store.exists("session"):
         if exists(map_cache_dir):
             rmtree(map_cache_dir)
-        result = create_google_maps_session(
-            api_key=api_key,
-            styles=None
-        )
+        result = create_google_maps_session(api_key=api_key, styles=None)
         store.put("session", **result)  # noqa
     session_expiry = store.get("session")["expiry"]
     if datetime.fromtimestamp(float(session_expiry)) < datetime.today():
         if exists(map_cache_dir):
             rmtree(map_cache_dir)
-        result = create_google_maps_session(
-            api_key=api_key,
-            styles=None
-        )
+        result = create_google_maps_session(api_key=api_key, styles=None)
         store.put("session", **result)  # noqa
     if not exists(map_cache_dir):
         makedirs(map_cache_dir)
     url = generate_tiles_api_url(
-        api_key=api_key,
-        session_token=store.get("session")["session"]
+        api_key=api_key, session_token=store.get("session")["session"]
     )
     return url

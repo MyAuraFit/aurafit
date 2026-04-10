@@ -1,5 +1,8 @@
 __all__ = ("CustomBoxLayout", "CustomCarousel")
 
+from pathlib import Path
+
+from kivy.lang import Builder
 from kivy.properties import (
     VariableListProperty,
     ColorProperty,
@@ -10,10 +13,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.carousel import Carousel
 
 from components.behaviors import AdaptiveBehavior
-from kivy.lang import Builder
-from os.path import join, dirname, basename
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class CustomBoxLayout(BoxLayout, AdaptiveBehavior):
@@ -21,7 +23,7 @@ class CustomBoxLayout(BoxLayout, AdaptiveBehavior):
     radius = VariableListProperty(0)
     shadow_color = ColorProperty([0, 0, 0, 0])
     line_color = ColorProperty([0, 0, 0, 0])
-    line_width = NumericProperty("1dp")
+    line_width = NumericProperty(1)
 
 
 class CustomCarousel(Carousel):

@@ -1,9 +1,16 @@
-from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, ColorProperty, BooleanProperty, VariableListProperty
-from os.path import join, basename, dirname
-from kivy.lang import Builder
+from pathlib import Path
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+from kivy.lang import Builder
+from kivy.properties import (
+    NumericProperty,
+    ColorProperty,
+    BooleanProperty,
+    VariableListProperty,
+)
+from kivy.uix.widget import Widget
+
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 __all__ = ("Dot",)
 

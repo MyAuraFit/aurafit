@@ -1,10 +1,13 @@
 __all__ = ("CoinScreen",)
 
-from os.path import join, dirname, basename
+from pathlib import Path
+
 from kivy.lang import Builder
+
 from features.basescreen import BaseScreen
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class CoinScreen(BaseScreen):

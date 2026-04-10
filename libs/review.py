@@ -1,14 +1,14 @@
 from datetime import datetime
 
+from android.runnable import run_on_ui_thread  # noqa
 from kivy.clock import triggered
 from kivy.storage.jsonstore import JsonStore
-from kvdroid import activity
-
-from libs.addmonths import add_months
 from sjplayreview.jclass import ReviewManagerFactory, ReviewManager
 from sjplayreview.jinterface import OnCompleteListener
 from sjplayservicecommon.jclass import GoogleApiAvailability, ConnectionResult
-from android.runnable import run_on_ui_thread  # noqa
+
+from kvdroid import activity
+from libs.addmonths import add_months
 
 _listener = None
 

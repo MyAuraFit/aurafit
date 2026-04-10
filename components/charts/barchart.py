@@ -1,16 +1,32 @@
 __all__ = ("BarChart",)
 
-from kivy.metrics import dp
+import re
+
+from kivy.clock import Clock
+from kivy.graphics import (
+    Color,
+    Line,
+    RoundedRectangle,
+    Point,
+    PushMatrix,
+    PopMatrix,
+    Rotate,
+)
+from kivy.properties import (
+    DictProperty,
+    ListProperty,
+    NumericProperty,
+    ColorProperty,
+    BooleanProperty,
+    OptionProperty,
+    StringProperty,
+)
+from kivy.uix.bubble import Bubble, BubbleContent
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line, RoundedRectangle, Point, PushMatrix, PopMatrix, Rotate
-from components.label import CustomLabel as Label
-from kivy.properties import DictProperty, ListProperty, NumericProperty, ColorProperty, BooleanProperty, OptionProperty, \
-    StringProperty
 from kivy.utils import get_color_from_hex
 from kivy_gradient import Gradient
-from kivy.uix.bubble import Bubble, BubbleContent
-from kivy.clock import Clock
-import re
+
+from components.label import CustomLabel as Label
 
 
 class BarChart(Widget):
@@ -46,6 +62,7 @@ class BarChart(Widget):
         no_data_font_size (NumericProperty): Font size for the no data text.
         no_data_text_color (ColorProperty): Color for the no data text.
     """
+
     data = DictProperty({})
     chart_mode = OptionProperty("standard", options=["standard", "interactive"])
     bubble_color = ColorProperty("skyblue")  # Default Skyblue color
@@ -59,7 +76,9 @@ class BarChart(Widget):
     value_font_size = NumericProperty("9sp")
     axis_label_color = ColorProperty((0, 0, 0, 1))
     axis_label_font_size = NumericProperty("9sp")
-    x_axis_label_rotation = OptionProperty("no-rotation", options=["no-rotation", "left-up", "left-down"])
+    x_axis_label_rotation = OptionProperty(
+        "no-rotation", options=["no-rotation", "left-up", "left-down"]
+    )
     y_axis_labels = BooleanProperty(False)
     grid = BooleanProperty(False)
     grid_style = OptionProperty("line", options=["line", "dashed", "dotted"])
@@ -74,12 +93,19 @@ class BarChart(Widget):
     def __init__(self, **kwargs):
         """Initialize the BarChart widget."""
         super().__init__(**kwargs)
-        self.bind(pos=self.update_chart, size=self.update_chart,
-                  data=self.update_chart, colors=self.update_chart,
-                  gradient_colors=self.update_chart, grid=self.update_chart,
-                  bar_radius=self.update_chart, grid_style=self.update_chart,
-                  grid_color=self.update_chart, chart_mode=self.update_chart,
-                  x_axis_label_rotation=self.update_chart)
+        self.bind(
+            pos=self.update_chart,
+            size=self.update_chart,
+            data=self.update_chart,
+            colors=self.update_chart,
+            gradient_colors=self.update_chart,
+            grid=self.update_chart,
+            bar_radius=self.update_chart,
+            grid_style=self.update_chart,
+            grid_color=self.update_chart,
+            chart_mode=self.update_chart,
+            x_axis_label_rotation=self.update_chart,
+        )
         self.bar_infos = []
 
     def validate_input(self):
@@ -123,7 +149,7 @@ class BarChart(Widget):
                 no_data_label.size = (label_width, label_height)
                 no_data_label.pos = (
                     center_x - label_width / 2,
-                    center_y - label_height / 2
+                    center_y - label_height / 2,
                 )
 
                 # Add to widget tree
@@ -136,7 +162,7 @@ class BarChart(Widget):
                 self.gradient_texture = self.generate_gradient_texture()
             except ValueError as e:
                 print(f"Error generating gradient texture: {e}")
-                self.color_style = 'standard'
+                self.color_style = "standard"
 
         # Calculate chart dimensions
         num_bars = len(self.data)
@@ -164,8 +190,14 @@ class BarChart(Widget):
 
         # Add title if present
         if self.title:
-            title_label = Label(text=self.title, font_size=self.title_font_size, font_name=self.font_name,
-                                color=self.title_color, size_hint=(None, None), size=(self.width, title_height))
+            title_label = Label(
+                text=self.title,
+                font_size=self.title_font_size,
+                font_name=self.font_name,
+                color=self.title_color,
+                size_hint=(None, None),
+                size=(self.width, title_height),
+            )
             title_label.text_size = None, None
             title_label.pos = (self.x, self.top - title_label.height)
             self.add_widget(title_label)
@@ -182,62 +214,80 @@ class BarChart(Widget):
             bar_x = start_x + i * (bar_width + spacing)
             bar_y = start_y
 
-            self.bar_infos.append({
-                "x": bar_x,
-                "y": bar_y,
-                "width": bar_width,
-                "height": bar_height,
-                "value": value
-            })
+            self.bar_infos.append(
+                {
+                    "x": bar_x,
+                    "y": bar_y,
+                    "width": bar_width,
+                    "height": bar_height,
+                    "value": value,
+                }
+            )
 
             # Draw bar
             with self.canvas:
                 if self.color_style == "gradient" and self.gradient_texture:
                     Color(1, 1, 1, 1)
                     RoundedRectangle(
-                        pos=(bar_x, bar_y), size=(bar_width, bar_height), radius=[self.bar_radius],
-                        texture=self.gradient_texture
+                        pos=(bar_x, bar_y),
+                        size=(bar_width, bar_height),
+                        radius=[self.bar_radius],
+                        texture=self.gradient_texture,
                     )
                 else:
                     Color(*self.get_color(i))
                     RoundedRectangle(
-                        pos=(bar_x, bar_y), size=(bar_width, bar_height), radius=[self.bar_radius]
+                        pos=(bar_x, bar_y),
+                        size=(bar_width, bar_height),
+                        radius=[self.bar_radius],
                     )
 
             # Add value label for standard mode
             if self.chart_mode == "standard":
                 value_label = Label(
-                    text=str(value), font_size=self.value_font_size,
-                    font_name=self.font_name, color=self.value_color,
-                    adaptive_size=True
+                    text=str(value),
+                    font_size=self.value_font_size,
+                    font_name=self.font_name,
+                    color=self.value_color,
+                    adaptive_size=True,
                 )
 
                 value_label.texture_update()
                 value_label.size = value_label.texture_size
                 # Center the label horizontally with the bar
-                value_label.pos = (bar_x + (bar_width - value_label.width) / 2, bar_y + bar_height + 5)
+                value_label.pos = (
+                    bar_x + (bar_width - value_label.width) / 2,
+                    bar_y + bar_height + 5,
+                )
                 self.add_widget(value_label)
 
             # Add x-axis label
             x_axis_label = Label(
-                text=label, font_size=self.axis_label_font_size,
+                text=label,
+                font_size=self.axis_label_font_size,
                 color=self.axis_label_color,
-                font_name=self.font_name, adaptive_size=True
+                font_name=self.font_name,
+                adaptive_size=True,
             )
 
             x_axis_label.texture_update()
-            x_axis_label.size = (bar_width, x_axis_label.texture_size[1])  # Set height based on content
+            x_axis_label.size = (
+                bar_width,
+                x_axis_label.texture_size[1],
+            )  # Set height based on content
 
             # Position labels further away from the bars to prevent overlap
             # Use more spacing for rotated labels
             if self.x_axis_label_rotation == "no-rotation":
-                label_y_pos = start_y - (bottom_padding / 1.6)  # Increased distance from bars
+                label_y_pos = start_y - (
+                    bottom_padding / 1.6
+                )  # Increased distance from bars
             else:
                 label_y_pos = start_y - (bottom_padding / 1.8)
 
             x_axis_label.pos = (bar_x, label_y_pos)
 
-            # Rotate x-axis label 
+            # Rotate x-axis label
             angle = 0
             if self.x_axis_label_rotation == "left-up":
                 angle = 45
@@ -272,26 +322,37 @@ class BarChart(Widget):
             with self.canvas:
                 Color(*self.grid_color)
                 if self.grid_style == "line":
-                    Line(points=[start_x - 10, y, start_x + total_width + 10, y], width=1)
+                    Line(
+                        points=[start_x - 10, y, start_x + total_width + 10, y], width=1
+                    )
                 elif self.grid_style == "dashed":
-                    for x in range(int(start_x - 10), int(start_x + total_width + 10), 20):
+                    for x in range(
+                        int(start_x - 10), int(start_x + total_width + 10), 20
+                    ):
                         Line(points=[x, y, x + 10, y], width=1)
                 else:  # dotted
-                    for x in range(int(start_x - 10), int(start_x + total_width + 10), 10):
+                    for x in range(
+                        int(start_x - 10), int(start_x + total_width + 10), 10
+                    ):
                         Point(points=[x, y], pointsize=1)
 
             # Draw y-axis labels if enabled
             if self.y_axis_labels:
                 y_axis_label = Label(
-                    text=str(int(value)), font_size=self.axis_label_font_size,
-                    color=self.axis_label_color, adaptive_size=True,
+                    text=str(int(value)),
+                    font_size=self.axis_label_font_size,
+                    color=self.axis_label_color,
+                    adaptive_size=True,
                     font_name=self.font_name,
                 )
 
                 y_axis_label.texture_update()
                 y_axis_label.size = y_axis_label.texture_size
                 # Right-align the label and position it to the left of the grid
-                y_axis_label.pos = (start_x - y_axis_label.width - 15, y - y_axis_label.height / 2)
+                y_axis_label.pos = (
+                    start_x - y_axis_label.width - 15,
+                    y - y_axis_label.height / 2,
+                )
                 self.add_widget(y_axis_label)
 
     def is_valid_hex(self, color):
@@ -304,7 +365,7 @@ class BarChart(Widget):
         Returns:
             bool: True if the color is a valid hex color, False otherwise.
         """
-        return bool(re.match(r'^#[0-9a-fA-F]{6}$', color))
+        return bool(re.match(r"^#[0-9a-fA-F]{6}$", color))
 
     def get_color(self, index):
         """
@@ -325,24 +386,33 @@ class BarChart(Widget):
         if self.colors:
             color = self.colors[index % len(self.colors)]
             if isinstance(color, str):
-                if color.startswith('#'):
+                if color.startswith("#"):
                     if self.is_valid_hex(color):
                         return get_color_from_hex(color)
                     else:
-                        raise ValueError(f"Invalid hex color format: {color}. Must be #RRGGBB (6 digits)")
+                        raise ValueError(
+                            f"Invalid hex color format: {color}. Must be #RRGGBB (6 digits)"
+                        )
                 else:
                     raise ValueError(
-                        f"Invalid color format: {color}. String colors must be hex values starting with '#'")
+                        f"Invalid color format: {color}. String colors must be hex values starting with '#'"
+                    )
             elif isinstance(color, (tuple, list)):
                 if len(color) == 4:
                     if all(0 <= c <= 1 for c in color):
                         return color
                     else:
-                        raise ValueError(f"Invalid RGBA color values: {color}. Values must be between 0 and 1.")
+                        raise ValueError(
+                            f"Invalid RGBA color values: {color}. Values must be between 0 and 1."
+                        )
                 else:
-                    raise ValueError(f"Invalid RGBA color: {color}. Must be RGBA (4 values).")
+                    raise ValueError(
+                        f"Invalid RGBA color: {color}. Must be RGBA (4 values)."
+                    )
             else:
-                raise ValueError(f"Invalid color format: {color}. Must be a 6-digit hex string or RGBA tuple/list.")
+                raise ValueError(
+                    f"Invalid color format: {color}. Must be a 6-digit hex string or RGBA tuple/list."
+                )
         return self.bar_default_color
 
     def generate_gradient_texture(self):
@@ -360,10 +430,14 @@ class BarChart(Widget):
 
         for color in self.gradient_colors:
             if isinstance(color, str):
-                if not color.startswith('#') or not self.is_valid_hex(color):
-                    raise ValueError(f"Invalid hex color format: {color}. Must be #RRGGBB (6 digits)")
+                if not color.startswith("#") or not self.is_valid_hex(color):
+                    raise ValueError(
+                        f"Invalid hex color format: {color}. Must be #RRGGBB (6 digits)"
+                    )
             else:
-                raise ValueError(f"Invalid color format for gradient: {color}. Must be a 6-digit hex string.")
+                raise ValueError(
+                    f"Invalid color format for gradient: {color}. Must be a 6-digit hex string."
+                )
 
         _gradient_colors = [get_color_from_hex(color) for color in self.gradient_colors]
         return Gradient.vertical(*_gradient_colors)
@@ -380,10 +454,14 @@ class BarChart(Widget):
         Returns:
             bool: True if the touch event was handled, False otherwise.
         """
-        if self.chart_mode == 'interactive' and self.collide_point(*touch.pos):
+        if self.chart_mode == "interactive" and self.collide_point(*touch.pos):
             for bar_info in self.bar_infos:
                 if self.point_inside_bar(touch.pos, bar_info):
-                    self.show_value_bubble(bar_info['x'], bar_info['y'] + bar_info['height'], bar_info['value'])
+                    self.show_value_bubble(
+                        bar_info["x"],
+                        bar_info["y"] + bar_info["height"],
+                        bar_info["value"],
+                    )
                     return True
         return super().on_touch_down(touch)
 
@@ -399,8 +477,10 @@ class BarChart(Widget):
             bool: True if the point is inside the bar, False otherwise.
         """
         x, y = point
-        return (bar_info['x'] <= x <= bar_info['x'] + bar_info['width'] and
-                bar_info['y'] <= y <= bar_info['y'] + bar_info['height'])
+        return (
+            bar_info["x"] <= x <= bar_info["x"] + bar_info["width"]
+            and bar_info["y"] <= y <= bar_info["y"] + bar_info["height"]
+        )
 
     def show_value_bubble(self, x, y, value):
         """
@@ -418,7 +498,7 @@ class BarChart(Widget):
             font_size=self.value_font_size,
             color=self.value_color,
             font_name=self.font_name,
-            adaptive_size=True  # No fixed height
+            adaptive_size=True,  # No fixed height
         )
 
         # Update the texture to get the actual size
@@ -438,14 +518,16 @@ class BarChart(Widget):
 
         # Calculate proper heights based on label size
         content_width = bubble_label.width + content.padding[0] + content.padding[2]
-        content_height = bubble_label.height + content.padding[1] + content.padding[3]  # Add top and bottom padding
+        content_height = (
+            bubble_label.height + content.padding[1] + content.padding[3]
+        )  # Add top and bottom padding
         content.width = content_width
         content.height = content_height
         # Add the label to the content
         content.add_widget(bubble_label)
 
         # Position the bubble centered above the bar
-        bar_center_x = x + self.bar_infos[0]['width'] / 2
+        bar_center_x = x + self.bar_infos[0]["width"] / 2
         bubble_width = content_width
         bubble_x = bar_center_x - bubble_width / 2
         bubble_y = y + 10  # Position it above the bar
@@ -454,7 +536,7 @@ class BarChart(Widget):
         bubble = Bubble(
             size_hint=(None, None),
             pos=(bubble_x, bubble_y),
-            show_arrow=False  # No arrow
+            show_arrow=False,  # No arrow
         )
 
         bubble.width = bubble_width

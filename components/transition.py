@@ -179,14 +179,10 @@ class CubicBezier:
             root = self.clamp_range(t1 * math.cos(phi / 3.0) - a3)
             if not math.isnan(root):
                 return root
-            root = self.clamp_range(
-                t1 * math.cos((phi + 2.0 * math.pi) / 3.0) - a3
-            )
+            root = self.clamp_range(t1 * math.cos((phi + 2.0 * math.pi) / 3.0) - a3)
             if not math.isnan(root):
                 return root
-            return self.clamp_range(
-                t1 * math.cos((phi + 4.0 * math.pi) / 3.0) - a3
-            )
+            return self.clamp_range(t1 * math.cos((phi + 4.0 * math.pi) / 3.0) - a3)
 
         elif self.close_to(discriminant, 0.0):
             u1 = -cbrt(q2)
@@ -351,13 +347,11 @@ class SharedAxisTransition(TransitionBase):
             self._s_map[self.ih].origin = self._s_map[self.oh].origin
             # Relative subtracted area.
             self._slide_diff = (manager.width - self.slide_distance) * (
-                    manager.height - self.slide_distance
+                manager.height - self.slide_distance
             ) / (manager.width * manager.height) - 1
         elif self.transition_axis in ["x", "y"]:
             # Slide distance with opposite logic.
-            self._slide_diff = (
-                    (1 if self.opposite else -1) * self.slide_distance * 2
-            )
+            self._slide_diff = (1 if self.opposite else -1) * self.slide_distance * 2
         super().start(manager)
 
     def on_progress(self, progress):

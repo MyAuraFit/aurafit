@@ -1,13 +1,14 @@
-from sjfirebase.tools.mixin import AuthMixin, UserMixin, FirestoreMixin
 from kivy.clock import mainthread
+
+from kvdroid import activity
 from sjcredentials import (
     create_credential_manager,
     get_credential_request,
     get_credential_async,
 )
+from sjfirebase.tools.mixin import AuthMixin, UserMixin, FirestoreMixin
 from sjgoogleid import get_google_id_option, get_signin_with_google_option
 from sjgoogleid.jclass import GoogleIdTokenCredential
-from kvdroid import activity
 
 
 class GoogleAuthMixin(AuthMixin, UserMixin, FirestoreMixin):

@@ -1,8 +1,8 @@
-'''
+"""
 Plyer
 =====
 
-'''
+"""
 
 # __all__ = (
 #     'accelerometer', 'audio', 'barometer', 'battery', 'bluetooth',
@@ -13,9 +13,9 @@ Plyer
 #     'stt', 'temperature', 'tts', 'uniqueid', 'vibrator', 'wifi', 'devicename'
 # )
 
-__all__ = ('camera',)
+__all__ = ("camera",)
 
-__version__ = '2.1.0'
+__version__ = "2.1.0"
 
 
 from plyer import facades
@@ -43,7 +43,7 @@ from plyer.utils import Proxy
 # compass = Proxy('compass', facades.Compass)
 
 #: Camera proxy to :class:`plyer.facades.Camera`
-camera = Proxy('camera', facades.Camera)
+camera = Proxy("camera", facades.Camera)
 
 # #: Email proxy to :class:`plyer.facades.Email`
 # email = Proxy('email', facades.Email)

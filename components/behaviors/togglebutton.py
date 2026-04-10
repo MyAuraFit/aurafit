@@ -1,4 +1,4 @@
-__all__ = ('CustomToggleButtonBehavior', )
+__all__ = ("CustomToggleButtonBehavior",)
 
 from kivy.properties import AliasProperty
 from kivy.uix.behaviors import ToggleButtonBehavior
@@ -6,20 +6,19 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 
 class CustomToggleButtonBehavior(ToggleButtonBehavior):
     def _get_active(self):
-        return self.state == 'down'
+        return self.state == "down"
 
     def _set_active(self, value):
-        self.state = 'down' if value else 'normal'
+        self.state = "down" if value else "normal"
 
-    active = AliasProperty(
-        _get_active, _set_active, bind=('state', ), cache=True)
+    active = AliasProperty(_get_active, _set_active, bind=("state",), cache=True)
 
     def __init__(self, **kwargs):
-        self.fbind('state', self._on_state)
+        self.fbind("state", self._on_state)
         super().__init__(**kwargs)
 
     def _on_state(self, instance, value):
-        if self.group and self.state == 'down':
+        if self.group and self.state == "down":
             self._release_group(self)
 
     def on_group(self, *args):

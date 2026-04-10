@@ -1,15 +1,13 @@
-import json
-
+from android.runnable import run_on_ui_thread  # noqa
 from kivy.clock import mainthread, triggered
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, ObjectProperty
-
-from components.behaviors import AdaptiveBehavior
-from components.sheet import BaseSheet
 from sjbillingclient.jclass.billing import BillingResponseCode, ProductType
 from sjbillingclient.jclass.purchase import PurchaseState
 from sjbillingclient.tools import BillingClient
-from android.runnable import run_on_ui_thread  # noqa
+
+from components.behaviors import AdaptiveBehavior
+from components.sheet import BaseSheet
 
 
 class Billing:

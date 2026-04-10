@@ -1,4 +1,4 @@
-__all__ = ("TabsCarousel", )
+__all__ = ("TabsCarousel",)
 from kivy.properties import BooleanProperty
 from kivy.uix.carousel import Carousel
 

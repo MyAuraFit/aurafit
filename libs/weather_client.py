@@ -59,7 +59,10 @@ def fetch_weather(
     if hours is not None:
         payload["hours"] = hours
 
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {bearer_token}"}
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {bearer_token}",
+    }
 
     try:
         if timeout is None:
@@ -166,5 +169,5 @@ __all__ = (
     "fetch_hourly_weather",
     "fetch_daily_weather",
     "WeatherClientError",
-    "fetch_weather"
+    "fetch_weather",
 )

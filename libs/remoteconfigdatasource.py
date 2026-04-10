@@ -1,6 +1,6 @@
+from kvdroid.tools import get_resource_identifier
 from sjfirebase.jclass.firebaseremoteconfig import FirebaseRemoteConfig
 from sjfirebase.jclass.firebaseremoteconfigsettings import FirebaseRemoteConfigSettings
-from kvdroid.tools import get_resource_identifier
 
 
 class RemoteConfigDataSource:

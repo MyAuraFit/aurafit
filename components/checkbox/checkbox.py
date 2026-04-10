@@ -1,14 +1,16 @@
 __all__ = ("CustomCheckBox",)
 
-from kivy.properties import StringProperty, AliasProperty
+from pathlib import Path
+
+from kivy.lang import Builder
+from kivy.properties import StringProperty
 from kivy.uix.behaviors import TouchRippleBehavior
 
 from components.behaviors.togglebutton import CustomToggleButtonBehavior
 from components.label import Icon
-from kivy.lang import Builder
-from os.path import join, dirname, basename
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class CustomCheckBox(CustomToggleButtonBehavior, TouchRippleBehavior, Icon):

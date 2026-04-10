@@ -4,7 +4,7 @@
         orientation: "vertical"
         CustomBoxLayout:
             adaptive_height: True
-            padding: "20dp"
+            padding: "20dp", "10dp"
             IconButton:
                 icon: "arrow-left"
                 radius: self.height / 2
@@ -38,32 +38,201 @@
                     pos_hint: {"center_y": .5}
                     adaptive_size: True
                     font_size: "14sp"
+        Divider
+            color: app.theme_cls.text_color[:3] + [.15]
         ScrollView:
             scroll_distance: 0
             bar_width: 0
             do_scroll_x: False
+            effect_cls: "ScrollEffect"
             CustomBoxLayout:
                 id: content
                 adaptive_height: True
                 spacing: "20dp"
                 orientation: "vertical"
-                padding: "20dp"
-                CustomTextInput:
-                    id: text_input
-                    hint_text: "How do you want to feel today...?"
-                    hint_text_color: app.theme_cls.text_color
-                    multiline: True
-                    size_hint_y: None
-                    -height: "150dp"
-                    font_name: "assets/fonts/Cardo-Italic.ttf"
-                    padding: "20dp"
-                    radius: "20dp"
-                    line_color: app.theme_cls.text_color[:3] + [.3]
-                    shadow_color: app.theme_cls.shadow_color
-                    pos_hint: {"center_x": .5}
+                padding: 0, "20dp"
+                CustomBoxLayout:
+                    adaptive_height: True
+                    orientation: "vertical"
+                    CustomLabel:
+                        adaptive_height: True
+                        text: "What's Your Mood?"
+                        bold: True
+                        padding: "20dp", 0
+                    CustomLabel:
+                        text: "Choose how you want to feel"
+                        font_size: "13sp"
+                        adaptive_height: True
+                        color: app.theme_cls.text_color[:3] + [.5]
+                        padding: "20dp", 0
+                    ScrollView:
+                        scroll_distance: 0
+                        bar_width: 0
+                        do_scroll_y: False
+                        size_hint_y: None
+                        height: occasion_sv_box.height
+                        CustomBoxLayout:
+                            id: sv_box
+                            adaptive_size: True
+                            padding: "20dp", "15dp"
+                            spacing: "5dp"
+                            MoodOccasionButton:
+                                text: "Confident"
+                                group: "mood"
+                                on_active: if self.active: mood_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Romantic"
+                                group: "mood"
+                                on_active: if self.active: mood_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Composed"
+                                group: "mood"
+                                on_active: if self.active: mood_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Relaxed"
+                                group: "mood"
+                                on_active: if self.active: mood_text_input.text = self.text
+                            CustomButton:
+                                adaptive_size: True
+                                padding: "7dp", "5dp"
+                                text: "More..."
+                                font_size: "11sp"
+                                radius: "7dp"
+                                -color: app.theme_cls.text_color
+                                -bg_color: app.theme_cls.transparent_color
+                                line_color: app.theme_cls.text_color[:3] + [.5]
+                                on_release: root.pop_mood_occasion_selection_sheet("mood", "Choose Your Mood")
+                    CustomTextInput:
+                        id: mood_text_input
+                        font_size: "14sp"
+                        font_name: "assets/fonts/Cardo-Italic.ttf"
+                        shadow_color: app.theme_cls.shadow_color
+                        line_color: app.theme_cls.text_color[:3] + [.3]
+                        radius: "10dp"
+                        font_size: "13sp"
+                        hint_text: "Or describe your mood..."
+                        size_hint_x: None
+                        spread_radius: 0, 0
+                        width: root.width - dp(40)
+                        pos_hint: {"center_x": .5}
+                        padding: "10dp"
+                Divider:
+                    color: app.theme_cls.text_color[:3] + [.15]
+                CustomBoxLayout:
+                    adaptive_height: True
+                    orientation: "vertical"
+                    CustomLabel:
+                        adaptive_height: True
+                        text: "What's The Occasion?"
+                        bold: True
+                        padding: "20dp", 0
+                    CustomLabel:
+                        text: "Where are you going?"
+                        font_size: "13sp"
+                        adaptive_height: True
+                        color: app.theme_cls.text_color[:3] + [.5]
+                        padding: "20dp", 0
+                    ScrollView:
+                        scroll_distance: 0
+                        bar_width: 0
+                        do_scroll_y: False
+                        size_hint_y: None
+                        height: occasion_sv_box.height
+                        CustomBoxLayout:
+                            id: occasion_sv_box
+                            adaptive_size: True
+                            padding: "20dp", "15dp"
+                            spacing: "5dp"
+                            MoodOccasionButton:
+                                text: "Traditional Wedding"
+                                group: "occasion"
+                                on_active: if self.active: occasion_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Date Night"
+                                group: "occasion"
+                                on_active: if self.active: occasion_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Birthday Party"
+                                group: "occasion"
+                                on_active: if self.active: occasion_text_input.text = self.text
+                            MoodOccasionButton:
+                                text: "Work Meeting"
+                                group: "occasion"
+                                on_active: if self.active: occasion_text_input.text = self.text
+                            CustomButton:
+                                adaptive_size: True
+                                padding: "7dp", "5dp"
+                                text: "More..."
+                                font_size: "11sp"
+                                radius: "7dp"
+                                -color: app.theme_cls.text_color
+                                -bg_color: app.theme_cls.transparent_color
+                                line_color: app.theme_cls.text_color[:3] + [.5]
+                                on_release: root.pop_mood_occasion_selection_sheet("occasion", "Choose Your Occasion")
+                    CustomTextInput:
+                        id: occasion_text_input
+                        font_size: "14sp"
+                        font_name: "assets/fonts/Cardo-Italic.ttf"
+                        shadow_color: app.theme_cls.shadow_color
+                        line_color: app.theme_cls.text_color[:3] + [.3]
+                        radius: "10dp"
+                        font_size: "13sp"
+                        hint_text: "Or describe your event..."
+                        size_hint_x: None
+                        spread_radius: 0, 0
+                        width: root.width - dp(40)
+                        pos_hint: {"center_x": .5}
+                        padding: "10dp"
+                Divider:
+                    color: app.theme_cls.text_color[:3] + [.15]
+                CustomBoxLayout:
+                    adaptive_height: True
+                    orientation: "vertical"
+                    CustomLabel:
+                        adaptive_height: True
+                        text: "Time of Day"
+                        bold: True
+                        padding: "20dp", 0
+                    CustomLabel:
+                        text: "At what time?"
+                        font_size: "13sp"
+                        adaptive_height: True
+                        color: app.theme_cls.text_color[:3] + [.5]
+                        padding: "20dp", 0
+                    ScrollView:
+                        scroll_distance: 0
+                        bar_width: 0
+                        do_scroll_y: False
+                        size_hint_y: None
+                        height: time_sv_box.height
+                        CustomBoxLayout:
+                            id: time_sv_box
+                            adaptive_size: True
+                            padding: "20dp", "15dp"
+                            spacing: "5dp"
+                            text: ""
+                            MoodOccasionButton:
+                                text: "Morning"
+                                group: "time"
+                                on_active: if self.active: time_sv_box.text = self.text
+                            MoodOccasionButton:
+                                text: "Afternoon"
+                                group: "time"
+                                on_active: if self.active: time_sv_box.text = self.text
+                            MoodOccasionButton:
+                                text: "Evening"
+                                group: "time"
+                                on_active: if self.active: time_sv_box.text = self.text
+                            MoodOccasionButton:
+                                text: "Night"
+                                group: "time"
+                                on_active: if self.active: time_sv_box.text = self.text
+                Divider:
+                    color: app.theme_cls.text_color[:3] + [.15]
                 RelativeLayout:
-                    size_hint_y: None
-                    height: human_image.height
+                    size_hint: None, None
+                    size: root.width - dp(40), human_image.height
+                    pos_hint: {"center_x": .5}
                     ButtonBoxLayout:
                         id: human_image
                         adaptive_height: True
@@ -121,8 +290,9 @@
                         disabled: not selfie_cover_image.source
                         on_release: selfie_cover_image.source = ""
                 RelativeLayout:
-                    size_hint_y: None
-                    height: cloth_image.height
+                    size_hint: None, None
+                    size: root.width - dp(40), cloth_image.height
+                    pos_hint: {"center_x": .5}
                     ButtonBoxLayout:
                         id: cloth_image
                         adaptive_height: True
@@ -184,12 +354,17 @@
             padding: "20dp"
             CustomButton:
                 id: btn
-                size_hint: None, None
-                size: root.width - dp(40), "50dp"
+                size_hint_y: None
+                height: "50dp"
                 radius: "16dp"
                 text: "Generate My Aurafit"
                 bold: True
-                pos_hint: {"center_x": .5}
                 shadow_color: app.theme_cls.shadow_color
-                disabled: not (cloth_cover_image.source and selfie_cover_image.source and text_input.text)
+                disabled:
+                    not (
+                    cloth_cover_image.source
+                    and selfie_cover_image.source
+                    and mood_text_input.text
+                    and occasion_text_input.text
+                    and time_sv_box.text)
                 on_release: root.generate_my_aurafit()

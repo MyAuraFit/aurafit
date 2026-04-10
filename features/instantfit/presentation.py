@@ -1,8 +1,8 @@
 __all__ = ("InstantfitScreen",)
 
-import os
 import time
-from os.path import join, dirname, basename, exists
+from os.path import join, basename, exists
+from pathlib import Path
 
 from jnius import cast
 from kivy.clock import mainthread
@@ -10,11 +10,14 @@ from kivy.lang import Builder
 from kivy.properties import OptionProperty
 from kivy.utils import platform
 
+from components.sheet.sheet import MoodOccasionSelectionSheet
 from features.basescreen import BaseScreen, ScreenData
+from libs.tools import create_scaled_bitmap, compress_image, get_filename
 from plyer import camera
 from sjfirebase.tools.mixin import StorageMixin, FirestoreMixin, UserMixin
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class InstantfitScreen(BaseScreen, StorageMixin, FirestoreMixin, UserMixin):
@@ -53,7 +56,13 @@ class InstantfitScreen(BaseScreen, StorageMixin, FirestoreMixin, UserMixin):
     def add_image(self, filename):
         if not exists(filename):
             return False
-        self._add_image(filename)
+        bitmap = create_scaled_bitmap(filename, 1280)
+        data = compress_image(bitmap)
+        image_path = get_filename(filename)
+        with open(image_path, "wb") as f:
+            f.write(data[0].tostring())
+        self._add_image(image_path)
+        self.to_be_deleted.append(image_path)
         return False
 
     @mainthread
@@ -88,7 +97,9 @@ class InstantfitScreen(BaseScreen, StorageMixin, FirestoreMixin, UserMixin):
 
         result_screen_data = ScreenData()
         result_screen_data.setdefault("type", "instantfit")
-        result_screen_data.setdefault("prompt", self.ids.text_input.text)
+        result_screen_data.setdefault("mood", self.ids.mood_text_input.text)
+        result_screen_data.setdefault("occasion", self.ids.occasion_text_input.text)
+        result_screen_data.setdefault("time_of_day", self.ids.time_sv_box.text)
 
         cloth_gs_data = {}
         selfie_gs_data = {}
@@ -164,12 +175,15 @@ class InstantfitScreen(BaseScreen, StorageMixin, FirestoreMixin, UserMixin):
         self.ids.content.disabled = False
         self.ids.btn.disabled = False
         self.ids.btn.text = "Generate My Aurafit"
-        self.ids.text_input.text = ""
         self.ids.selfie_cover_image.source = ""
         self.ids.cloth_cover_image.source = ""
-        for files in self.to_be_deleted:
-            os.remove(files)
+        for file in self.to_be_deleted:
+            file.unlink()
         self.to_be_deleted.clear()
 
     def on_leave(self, *args):
         self.cleanup()
+
+    def pop_mood_occasion_selection_sheet(self, group, title):
+        sheet = MoodOccasionSelectionSheet(screen=self, group=group, title=title)
+        sheet.open()

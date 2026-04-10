@@ -1,10 +1,16 @@
-from kivy.graphics import Color, PushMatrix, Scale, PopMatrix
-from kivy.uix.recycleview import RecycleView
-from kivy.clock import Clock, triggered
-from kivy.properties import OptionProperty, BooleanProperty, ObjectProperty, NumericProperty, ListProperty
 from kivy.animation import Animation
+from kivy.clock import Clock, triggered
+from kivy.graphics import Color, PushMatrix, Scale, PopMatrix
+from kivy.properties import (
+    OptionProperty,
+    BooleanProperty,
+    ObjectProperty,
+    NumericProperty,
+    ListProperty,
+)
+from kivy.uix.recycleview import RecycleView
 
-from components.effects import LowerScrollEffect, LowerDampedScrollEffect
+from components.effects import LowerDampedScrollEffect
 
 __all__ = ("LEFT", "RIGHT", "DOWN", "UP", "NULL", "RealRecycleView")
 
@@ -17,7 +23,9 @@ NULL = 0  # finger or scroll bar or content is not moving
 
 class RealRecycleView(RecycleView):
     do_swipe = BooleanProperty(False)
-    swipe_direction = OptionProperty("horizontal", options=["horizontal", "vertical"], allownone=False)
+    swipe_direction = OptionProperty(
+        "horizontal", options=["horizontal", "vertical"], allownone=False
+    )
     effect_cls = ObjectProperty(LowerDampedScrollEffect, allownone=True)
     scroll_distance_traveled = ListProperty([0, 0])  # read-only
     scroll_direction = NumericProperty(NULL)  # read-only
@@ -30,7 +38,7 @@ class RealRecycleView(RecycleView):
     _internal_scale = None
 
     def __init__(self, **kwargs):
-        self.register_event_type('on_real_scroll_stop')  # type: ignore
+        self.register_event_type("on_real_scroll_stop")  # type: ignore
         self.register_event_type("on_real_scroll_start")
         self.register_event_type("on_swipe_up")
         self.register_event_type("on_swipe_down")
@@ -90,8 +98,10 @@ class RealRecycleView(RecycleView):
         if self.scroll_index > 0 < len(self.data) - 1:
             self.scroll_index -= 1
             child_height = self.children[0].default_height
-            scroll = self.convert_distance_to_scroll(0, child_height * self.scroll_index)[1]
-            anim = Animation(scroll_y=max(scroll, 0.0), t='out_quad', d=.3)
+            scroll = self.convert_distance_to_scroll(
+                0, child_height * self.scroll_index
+            )[1]
+            anim = Animation(scroll_y=max(scroll, 0.0), t="out_quad", d=0.3)
             anim.bind(on_complete=lambda *_: self.dispatch_listeners(direction="up"))
             anim.start(self)
 
@@ -101,8 +111,10 @@ class RealRecycleView(RecycleView):
         if self.scroll_index < len(self.data) - 1:
             self.scroll_index += 1
             child_height = self.children[0].default_height
-            scroll = self.convert_distance_to_scroll(0, child_height * self.scroll_index)[1]
-            anim = Animation(scroll_y=min(scroll, 1.0), t='out_quad', d=.3)
+            scroll = self.convert_distance_to_scroll(
+                0, child_height * self.scroll_index
+            )[1]
+            anim = Animation(scroll_y=min(scroll, 1.0), t="out_quad", d=0.3)
             anim.bind(on_complete=lambda *_: self.dispatch_listeners(direction="down"))
             anim.start(self)
 
@@ -112,8 +124,10 @@ class RealRecycleView(RecycleView):
         if self.scroll_index < len(self.data) - 1:
             self.scroll_index += 1
             child_width = self.children[0].default_width
-            scroll = self.convert_distance_to_scroll(child_width * self.scroll_index, 0)[0]
-            anim = Animation(scroll_x=min(scroll, 1.0), t='out_quad', d=.3)
+            scroll = self.convert_distance_to_scroll(
+                child_width * self.scroll_index, 0
+            )[0]
+            anim = Animation(scroll_x=min(scroll, 1.0), t="out_quad", d=0.3)
             anim.bind(on_complete=lambda *_: self.dispatch_listeners(direction="left"))
             anim.start(self)
 
@@ -123,8 +137,10 @@ class RealRecycleView(RecycleView):
         if self.scroll_index > 0 < len(self.data):
             self.scroll_index -= 1
             child_width = self.children[0].default_width
-            scroll = self.convert_distance_to_scroll(child_width * self.scroll_index, 0)[0]
-            anim = Animation(scroll_x=max(scroll, 0.0), t='out_quad', d=.3)
+            scroll = self.convert_distance_to_scroll(
+                child_width * self.scroll_index, 0
+            )[0]
+            anim = Animation(scroll_x=max(scroll, 0.0), t="out_quad", d=0.3)
             anim.bind(on_complete=lambda *_: self.dispatch_listeners(direction="right"))
             anim.start(self)
 
@@ -137,7 +153,10 @@ class RealRecycleView(RecycleView):
         self._scrolling = True
         viewport = self.get_viewport()
         viewport_scroll_height = self.viewport_size[1] - viewport[-1]
-        self.scroll_distance_traveled = viewport[0], viewport_scroll_height - viewport[1]
+        self.scroll_distance_traveled = (
+            viewport[0],
+            viewport_scroll_height - viewport[1],
+        )
 
     def on_scroll_x(self, *_):
         if self.__scroll_x < self.scroll_x:
@@ -168,7 +187,9 @@ class RealRecycleView(RecycleView):
         if func := kwargs.get("right"):
             cls._swipe_right_listeners.append(func)
         else:
-            raise AttributeError(f"Unknown argument. Argument must be any or both of [up, down, right, left]")
+            raise AttributeError(
+                f"Unknown argument. Argument must be any or both of [up, down, right, left]"
+            )
 
     @classmethod
     def unregister_swipe_listener(cls, **kwargs):
@@ -181,7 +202,9 @@ class RealRecycleView(RecycleView):
         if func := kwargs.get("right"):
             cls._swipe_right_listeners.remove(func)
         else:
-            raise AttributeError(f"Unknown argument. Argument must be any or both of [up, down, right, left]")
+            raise AttributeError(
+                f"Unknown argument. Argument must be any or both of [up, down, right, left]"
+            )
 
     def dispatch_listeners(self, direction):
         if direction == "up":

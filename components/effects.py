@@ -1,9 +1,9 @@
 import math
 
 from kivy.animation import Animation
+from kivy.effects.dampedscroll import DampedScrollEffect
 from kivy.effects.scroll import ScrollEffect
 from kivy.properties import NumericProperty
-from kivy.effects.dampedscroll import DampedScrollEffect
 
 
 class LowerScrollEffect(ScrollEffect):
@@ -25,7 +25,7 @@ class HardStopScrollEffect(LowerScrollEffect):
 
 
 class LowerDampedScrollEffect(DampedScrollEffect):
-    friction = NumericProperty(.035)
+    friction = NumericProperty(0.035)
 
     def on_overscroll(self, *args):
         super().on_overscroll(*args)
@@ -123,9 +123,7 @@ class StretchOverScrollStencil(ScrollEffect):
 
     def absorb_impact(self):
         self.set_scale_origin()
-        sanitized_velocity = self.clamp(
-            abs(self.velocity), 1, self.maximum_velocity
-        )
+        sanitized_velocity = self.clamp(abs(self.velocity), 1, self.maximum_velocity)
         # Approx implementation.
         new_scale = 1 + min(
             (sanitized_velocity / self.approx_normailzer),

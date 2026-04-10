@@ -1,6 +1,7 @@
 __all__ = ("CustomLabel", "Icon", "Badge")
 
-from os.path import join, dirname, basename
+from os.path import join
+from pathlib import Path
 
 from kivy.graphics.opengl import glGetIntegerv, GL_MAX_TEXTURE_SIZE
 from kivy.lang import Builder
@@ -18,7 +19,8 @@ from kivy.uix.label import Label
 from components import font_path
 from components.behaviors import AdaptiveBehavior
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 lbl = Label(text="a")  # Dummy label to calculate texture size
 
@@ -28,7 +30,7 @@ class CustomLabel(AdaptiveBehavior, Label):
     radius = VariableListProperty(0)
     shadow_color = ColorProperty([0, 0, 0, 0])
     line_color = ColorProperty([0, 0, 0, 0])
-    line_width = NumericProperty("1dp")
+    line_width = NumericProperty(1)
     spread_radius = ListProperty([dp(-4), dp(-4)])
 
     def get_max_characters(self):

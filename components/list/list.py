@@ -1,11 +1,14 @@
 __all__ = ("ChatList",)
 
-from kivy.properties import StringProperty, NumericProperty
-from components.layout import CustomBoxLayout
-from kivy.lang import Builder
-from os.path import join, dirname, basename
+from pathlib import Path
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+from kivy.lang import Builder
+from kivy.properties import StringProperty
+
+from components.layout import CustomBoxLayout
+
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class ChatList(CustomBoxLayout):

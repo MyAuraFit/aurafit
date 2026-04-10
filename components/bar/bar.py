@@ -1,18 +1,26 @@
-from kivy.core.window import Window as w
+from pathlib import Path
+
 from kivy.animation import Animation
 from kivy.clock import Clock, mainthread
+from kivy.core.window import Window as w
 from kivy.lang import Builder
 from kivy.metrics import dp, sp
-from kivy.properties import ListProperty, BooleanProperty, ColorProperty, StringProperty, VariableListProperty, \
-    NumericProperty
-from kivy.uix.behaviors import TouchRippleButtonBehavior, ButtonBehavior
+from kivy.properties import (
+    ListProperty,
+    BooleanProperty,
+    ColorProperty,
+    StringProperty,
+    VariableListProperty,
+    NumericProperty,
+)
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
 
 from components.label import Badge, Icon, CustomLabel
-from kivy.uix.boxlayout import BoxLayout
-from os.path import join, dirname, basename
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 __all__ = ("NavigationBar", "NavigationItem", "base_bar", "win_md_bnb")
 
@@ -53,12 +61,12 @@ class NavigationItem(ButtonBehavior, RelativeLayout):
         icon = NavigationItemIcon(
             icon=self.icon,
             icon_color_normal=self.icon_color_normal,
-            icon_color_active=self.icon_color_active
+            icon_color_active=self.icon_color_active,
         )
         self.bind(
             icon=icon.setter("icon"),
             icon_color_normal=icon.setter("icon_color_normal"),
-            icon_color_active=icon.setter("icon_color_active")
+            icon_color_active=icon.setter("icon_color_active"),
         )
         if self.use_badge:
             badge = Badge(text=self.badge_text)
@@ -71,7 +79,7 @@ class NavigationItem(ButtonBehavior, RelativeLayout):
             lbl = NavigationItemLabel(
                 text=self.text,
                 text_color_active=self.text_color_active,
-                text_color_normal=self.text_color_normal
+                text_color_normal=self.text_color_normal,
             )
             self.bind(
                 text=lbl.setter("text"),
@@ -89,14 +97,22 @@ class NavigationItem(ButtonBehavior, RelativeLayout):
             for child in self.children:
                 if child.children:
                     Animation(
-                        font_size=sp(24) if isinstance(child.children[0], NavigationItemIcon) else sp(14),
+                        font_size=(
+                            sp(24)
+                            if isinstance(child.children[0], NavigationItemIcon)
+                            else sp(14)
+                        ),
                         d=self.indicator_duration,
                     ).start(child.children[0])
         else:
             for child in self.children:
                 if child.children:
                     Animation(
-                        font_size=sp(20) if isinstance(child.children[0], NavigationItemIcon) else sp(12),
+                        font_size=(
+                            sp(20)
+                            if isinstance(child.children[0], NavigationItemIcon)
+                            else sp(12)
+                        ),
                         d=self.indicator_duration,
                     ).start(child.children[0])
 
@@ -146,7 +162,7 @@ class NavigationBar(BoxLayout):
                 name=tab.get("name"),
                 use_text=self.use_text,
                 indicator_color=self.indicator_color,
-                on_release=tab.get("on_release", lambda _: None)
+                on_release=tab.get("on_release", lambda _: None),
             )
             self._variant_assignment(btn, tab)
             if self.text_color_active:
@@ -162,7 +178,7 @@ class NavigationBar(BoxLayout):
                 text_color_normal=btn.setter("text_color_normal"),
                 text_color_active=btn.setter("text_color_active"),
                 icon_color_normal=btn.setter("icon_color_normal"),
-                icon_color_active=btn.setter("icon_color_active")
+                icon_color_active=btn.setter("icon_color_active"),
             )
             self.add_widget(btn)
 
@@ -174,7 +190,9 @@ class NavigationBar(BoxLayout):
                 continue
             child.active = False
             self._variant_assignment(child, tab)
-        anim = Animation(y=self.padding[-1] - dp(-5), d=.05) + Animation(y=self.padding[-1], d=.05)
+        anim = Animation(y=self.padding[-1] - dp(-5), d=0.05) + Animation(
+            y=self.padding[-1], d=0.05
+        )
         anim.start(instance)
 
     def _variant_assignment(self, btn, tab):
@@ -244,20 +262,20 @@ class base_bar:
 class win_md_bnb(base_bar):
     @classmethod
     def create_bnb(
-            cls,
-            bg_color=None,
-            use_text=False,
-            indicator_color=None,
-            variant_icon=True,
-            tabs=None,
-            text_color_active=None,
-            text_color_normal=None,
-            icon_color_active=None,
-            icon_color_normal=None,
-            radius=0,
-            shadow_color=None,
-            line_color=None,
-            line_width="1dp",
+        cls,
+        bg_color=None,
+        use_text=False,
+        indicator_color=None,
+        variant_icon=True,
+        tabs=None,
+        text_color_active=None,
+        text_color_normal=None,
+        icon_color_active=None,
+        icon_color_normal=None,
+        radius=0,
+        shadow_color=None,
+        line_color=None,
+        line_width="1dp",
     ):
         if line_color is None:
             line_color = [0, 0, 0, 0]
@@ -279,7 +297,7 @@ class win_md_bnb(base_bar):
             shadow_color=shadow_color,
             line_color=line_color,
             line_width=line_width,
-            actual_height="72dp" if use_text else "60dp"
+            actual_height="72dp" if use_text else "60dp",
         )
         if bg_color:
             cls.bar.bg_color = bg_color
@@ -290,12 +308,12 @@ class win_md_bnb(base_bar):
 
     @classmethod
     def push(cls):
-        Animation(y=-0.5, d=.2).start(cls.bar)
+        Animation(y=-0.5, d=0.2).start(cls.bar)
         super().push()
 
     @classmethod
     def pop(cls):
-        Animation(y=-cls.bar.height - dp(20), d=.2).start(cls.bar)
+        Animation(y=-cls.bar.height - dp(20), d=0.2).start(cls.bar)
         super().pop()
 
 
@@ -303,12 +321,11 @@ if __name__ == "__main__":
     from kivy.app import App
     from ui.theme import ThemeManager
 
-
     class TestApp(App):
         theme_cls = ThemeManager()
         navbar_height = NumericProperty(0)
         statusbar_height = NumericProperty(0)
-        
+
         def on_start(self):
             win_md_bnb.create_bnb(
                 tabs=[
@@ -319,24 +336,23 @@ if __name__ == "__main__":
                         "active": True,
                         "use_badge": True,
                         "badge_text": "900",
-                        "name": ""
+                        "name": "",
                     },
                     {
                         "icon": "fire-circle",
                         "icon_variant": "fire",
                         "text": "Memoir",
-                        "name": ""
+                        "name": "",
                     },
                     {
                         "icon": "dots-horizontal",
                         "icon_variant": "dots-horizontal",
                         "text": "More",
-                        "name": ""
-                    }
+                        "name": "",
+                    },
                 ],
                 use_text=True,
             )
             win_md_bnb.push()
-
 
     TestApp().run()

@@ -1,8 +1,6 @@
 __all__ = ("UploadScreen",)
 
-import secrets
-import time
-from os.path import join, dirname, basename, exists
+from os.path import exists
 from pathlib import Path, PurePath
 
 from kivy.clock import mainthread
@@ -13,11 +11,12 @@ from kivy.utils import platform
 from components.behaviors import AdaptiveBehavior
 from components.sheet import BaseSheet
 from features.basescreen import BaseScreen
-from libs.tools import compress_image, create_scaled_bitmap
+from libs.tools import compress_image, create_scaled_bitmap, get_filename
 from plyer import camera
 from sjfirebase.tools.mixin import StorageMixin, UserMixin
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class UploadScreen(BaseScreen, StorageMixin, UserMixin):
@@ -89,13 +88,6 @@ class UploadScreen(BaseScreen, StorageMixin, UserMixin):
 
 
 class UploadSelectionSheet(BaseSheet, AdaptiveBehavior):
-    def get_filename(self):
-        from kvdroid import activity
-
-        cache_path = activity.getExternalCacheDir().getAbsolutePath()
-        t = time.gmtime()
-        timestamp = time.strftime("%b-%d-%Y_%H:%M:%S", t)
-        return join(cache_path, f"aurafit-{secrets.token_urlsafe(4)}-{timestamp}.png")
 
     def open_photo_picker(self):
         if platform == "android":
@@ -107,7 +99,7 @@ class UploadSelectionSheet(BaseSheet, AdaptiveBehavior):
 
     def take_photo(self):
         if platform == "android":
-            image_path = self.get_filename()
+            image_path = get_filename()
             self.screen.to_be_deleted.append(Path(image_path))
             camera.take_picture(filename=image_path, on_complete=self.add_image)
         self.dismiss()
@@ -125,11 +117,11 @@ class UploadSelectionSheet(BaseSheet, AdaptiveBehavior):
             return False
         bitmap = create_scaled_bitmap(filename, 1280)
         data = compress_image(bitmap)
-        image_path = self.get_filename()
+        image_path = get_filename(filename)
         with open(image_path, "wb") as f:
             f.write(data[0].tostring())
         self._add_image(image_path)
-        self.screen.to_be_deleted.append(Path(image_path))
+        self.screen.to_be_deleted.append(image_path)
         return False
 
     @mainthread

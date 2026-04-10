@@ -1,7 +1,7 @@
 import contextlib
 
-from routingpy import utils
 import kivy_garden.mapview.view
+from routingpy import utils
 
 
 def __decode_polyline5__(polyline, is3d=False, order="latlng"):

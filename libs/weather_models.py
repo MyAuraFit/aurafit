@@ -213,9 +213,16 @@ class ForecastDay:
     def from_dict(cls, data: Optional[Dict[str, Any]]) -> "ForecastDay":
         data = data or {}
         known_keys = {
-            "interval", "displayDate", "daytimeForecast", "nighttimeForecast",
-            "maxTemperature", "minTemperature", "feelsLikeMaxTemperature",
-            "feelsLikeMinTemperature", "maxHeatIndex", "iceThickness",
+            "interval",
+            "displayDate",
+            "daytimeForecast",
+            "nighttimeForecast",
+            "maxTemperature",
+            "minTemperature",
+            "feelsLikeMaxTemperature",
+            "feelsLikeMinTemperature",
+            "maxHeatIndex",
+            "iceThickness",
         }
         extra = {k: v for k, v in data.items() if k not in known_keys}
         return cls(
@@ -225,8 +232,12 @@ class ForecastDay:
             nighttimeForecast=PartForecast.from_dict(data.get("nighttimeForecast")),
             maxTemperature=Temperature.from_dict(data.get("maxTemperature")),
             minTemperature=Temperature.from_dict(data.get("minTemperature")),
-            feelsLikeMaxTemperature=Temperature.from_dict(data.get("feelsLikeMaxTemperature")),
-            feelsLikeMinTemperature=Temperature.from_dict(data.get("feelsLikeMinTemperature")),
+            feelsLikeMaxTemperature=Temperature.from_dict(
+                data.get("feelsLikeMaxTemperature")
+            ),
+            feelsLikeMinTemperature=Temperature.from_dict(
+                data.get("feelsLikeMinTemperature")
+            ),
             maxHeatIndex=Temperature.from_dict(data.get("maxHeatIndex")),
             iceThickness=Quantity.from_dict(data.get("iceThickness")),
             extra=extra,
@@ -249,15 +260,23 @@ class ForecastHour:
     def from_dict(cls, data: Optional[Dict[str, Any]]) -> "ForecastHour":
         data = data or {}
         known_keys = {
-            "interval", "weatherCondition", "temperature", "feelsLikeTemperature",
-            "precipitation", "wind", "relativeHumidity", "cloudCover"
+            "interval",
+            "weatherCondition",
+            "temperature",
+            "feelsLikeTemperature",
+            "precipitation",
+            "wind",
+            "relativeHumidity",
+            "cloudCover",
         }
         extra = {k: v for k, v in data.items() if k not in known_keys}
         return cls(
             interval=Interval.from_dict(data.get("interval")),
             weatherCondition=WeatherCondition.from_dict(data.get("weatherCondition")),
             temperature=Temperature.from_dict(data.get("temperature")),
-            feelsLikeTemperature=Temperature.from_dict(data.get("feelsLikeTemperature")),
+            feelsLikeTemperature=Temperature.from_dict(
+                data.get("feelsLikeTemperature")
+            ),
             precipitation=Precipitation.from_dict(data.get("precipitation")),
             wind=Wind.from_dict(data.get("wind")),
             relativeHumidity=data.get("relativeHumidity"),
@@ -294,9 +313,7 @@ class CurrentConditions:
         extra = {k: v for k, v in data.items() if k not in known_keys}
         return cls(
             interval=Interval.from_dict(data.get("interval")),
-            weatherCondition=WeatherCondition.from_dict(
-                data.get("weatherCondition")
-            ),
+            weatherCondition=WeatherCondition.from_dict(data.get("weatherCondition")),
             temperature=Temperature.from_dict(data.get("temperature")),
             feelsLikeTemperature=Temperature.from_dict(
                 data.get("feelsLikeTemperature")
@@ -333,12 +350,8 @@ class WeatherResponse:
                 else None
             )
         )
-        days = [
-            ForecastDay.from_dict(x) for x in (data.get("forecastDays") or [])
-        ]
-        hours = [
-            ForecastHour.from_dict(x) for x in (data.get("forecastHours") or [])
-        ]
+        days = [ForecastDay.from_dict(x) for x in (data.get("forecastDays") or [])]
+        hours = [ForecastHour.from_dict(x) for x in (data.get("forecastHours") or [])]
         # Some responses may inline current conditions at top-level under various keys.
         # Prefer a key named "current" if present, otherwise use the remaining fields
         # as a current-conditions-like structure when no days/hours lists exist.
@@ -359,9 +372,11 @@ class WeatherResponse:
         return cls(
             forecastDays=days,
             forecastHours=hours,
-            current=CurrentConditions.from_dict(current_payload)
-            if current_payload is not None
-            else None,
+            current=(
+                CurrentConditions.from_dict(current_payload)
+                if current_payload is not None
+                else None
+            ),
             timeZone=tz,
             nextPageToken=data.get("nextPageToken"),
             extra=extra,

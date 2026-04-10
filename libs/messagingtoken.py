@@ -1,7 +1,7 @@
 from kivy.storage.jsonstore import JsonStore
-
 from sjfirebasemessaging.jclass.FirebaseMessaging import FirebaseMessaging
 from sjfirebasemessaging.jinterface.OnCompleteListener import OnCompleteListener
+
 from sjfirebase.tools.mixin import FirestoreMixin, UserMixin
 
 __all__ = ("generate_firebase_messaging_token",)

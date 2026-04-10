@@ -1,20 +1,21 @@
 __all__ = ("CustomTextInput",)
 
-from os.path import join, dirname, basename
+from pathlib import Path
 
 # from emoji import is_emoji
-from kivy import platform
 from kivy.clock import triggered
 from kivy.lang import Builder
 from kivy.properties import (
     VariableListProperty,
     ColorProperty,
     BooleanProperty,
-    OptionProperty, NumericProperty,
+    OptionProperty,
+    NumericProperty,
 )
 from kivy.uix.textinput import TextInput
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class CustomTextInput(TextInput):

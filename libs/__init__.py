@@ -2,8 +2,8 @@
 from kivy.clock import Clock, triggered
 from kivy.core.text import DEFAULT_FONT
 from kivy.metrics import sp
-from components.label import CustomLabel
 
+from components.label import CustomLabel
 from libs.decorator import android_only
 
 lbl = None

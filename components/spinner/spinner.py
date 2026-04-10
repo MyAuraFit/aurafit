@@ -1,15 +1,22 @@
-from typing import Union
+from pathlib import Path
+from textwrap import dedent
 
 from kivy.animation import Animation
 from kivy.clock import Clock
-from kivy.properties import BooleanProperty, NumericProperty, BoundedNumericProperty, ObjectProperty, ColorProperty
-from components.layout import CustomBoxLayout
 from kivy.lang import Builder
-from textwrap import dedent
-from components.dot import Dot
-from os.path import join, dirname, basename
+from kivy.properties import (
+    BooleanProperty,
+    NumericProperty,
+    BoundedNumericProperty,
+    ObjectProperty,
+    ColorProperty,
+)
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+from components.dot import Dot
+from components.layout import CustomBoxLayout
+
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 __all__ = ("DotSpinner", "DotCarousel")
 
@@ -38,8 +45,8 @@ class DotCarousel(CustomBoxLayout):
                 previous = child
         previous.active = False
         current.active = True
-        Animation(width=self.active_size, duration=.3).start(current)
-        Animation(width=self.normal_size, duration=.3).start(previous)
+        Animation(width=self.active_size, duration=0.3).start(current)
+        Animation(width=self.normal_size, duration=0.3).start(previous)
 
     def add_dash(self):
         for i in range(self.dash):
@@ -49,7 +56,7 @@ class DotCarousel(CustomBoxLayout):
                     width=self.active_size if self.index == i else self.normal_size,
                     active_color=self.active_color,
                     normal_color=self.normal_color,
-                    active=self.index == i
+                    active=self.index == i,
                 )
             )
 
@@ -57,8 +64,10 @@ class DotCarousel(CustomBoxLayout):
 class DotSpinner(CustomBoxLayout):
     active = BooleanProperty(False)
     dot_num = NumericProperty(3)
-    speed = NumericProperty(.5)
-    _current_active_dot_index = BoundedNumericProperty(0, min=0, max=dot_num.defaultvalue - 1, errorvalue=0)
+    speed = NumericProperty(0.5)
+    _current_active_dot_index = BoundedNumericProperty(
+        0, min=0, max=dot_num.defaultvalue - 1, errorvalue=0
+    )
     _animating = BooleanProperty(False)
 
     def __init__(self, **kwargs):
@@ -107,7 +116,9 @@ class DotSpinner(CustomBoxLayout):
 
     def _animate_spinner(self, _) -> None:
         index_max = self.property("_current_active_dot_index").get_max
-        if not self.get_current_active_dot() or (self._current_active_dot_index == index_max):
+        if not self.get_current_active_dot() or (
+            self._current_active_dot_index == index_max
+        ):
             dot = self.get_dot_index()
         else:
             self._current_active_dot_index += 1
@@ -120,7 +131,6 @@ if __name__ == "__main__":
     from kivy.app import App
     from kivy.lang import Builder
     from ui.theme import ThemeManager
-
 
     class Test(App):
         theme_cls = ObjectProperty()
@@ -146,6 +156,5 @@ if __name__ == "__main__":
 
         # def on_start(self):
         #     self.root.add_widget(DotSpinner(active=True, dot_num=5, pos_hint={"center": [.5, .5]}))
-
 
     Test().run()

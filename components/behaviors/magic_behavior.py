@@ -136,9 +136,7 @@ class MagicBehavior:
                 t="out_quad",
                 d=0.03 / self.magic_speed,
             )
-            + Animation(
-                scale_x=1, scale_y=1, t="out_elastic", d=0.4 / self.magic_speed
-            )
+            + Animation(scale_x=1, scale_y=1, t="out_elastic", d=0.4 / self.magic_speed)
         ).start(self)
 
     def shake(self) -> None:
@@ -146,9 +144,7 @@ class MagicBehavior:
 
         (
             Animation(translate_x=50, t="out_quad", d=0.02 / self.magic_speed)
-            + Animation(
-                translate_x=0, t="out_elastic", d=0.5 / self.magic_speed
-            )
+            + Animation(translate_x=0, t="out_elastic", d=0.5 / self.magic_speed)
         ).start(self)
 
     def wobble(self) -> None:
@@ -157,15 +153,11 @@ class MagicBehavior:
         (
             (
                 Animation(scale_y=0.7, t="out_quad", d=0.03 / self.magic_speed)
-                & Animation(
-                    scale_x=1.4, t="out_quad", d=0.03 / self.magic_speed
-                )
+                & Animation(scale_x=1.4, t="out_quad", d=0.03 / self.magic_speed)
             )
             + (
                 Animation(scale_y=1, t="out_elastic", d=0.5 / self.magic_speed)
-                & Animation(
-                    scale_x=1, t="out_elastic", d=0.4 / self.magic_speed
-                )
+                & Animation(scale_x=1, t="out_elastic", d=0.4 / self.magic_speed)
             )
         ).start(self)
 

@@ -1,5 +1,4 @@
-from kvdroid import activity
-
+from android.runnable import run_on_ui_thread  # noqa
 from sjappupdate.jclass import (
     AppUpdateManagerFactory,
     AppUpdateManager,
@@ -10,7 +9,8 @@ from sjappupdate.jclass import (
 )
 from sjappupdate.jinterface import OnSuccessListener, OnCompleteListener
 from sjplayservicecommon.jclass import GoogleApiAvailability, ConnectionResult
-from android.runnable import run_on_ui_thread  # noqa
+
+from kvdroid import activity
 
 
 class AppUpdate:

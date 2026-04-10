@@ -1,10 +1,10 @@
-'''
+"""
 Facades
 =======
 
 Interface of all the features available.
 
-'''
+"""
 
 # __all__ = ('Accelerometer', 'Audio', 'Barometer', 'Battery', 'Call', 'Camera',
 #            'Compass', 'Email', 'FileChooser', 'GPS', 'Gravity', 'Gyroscope',
@@ -14,7 +14,7 @@ Interface of all the features available.
 #            'Processors', 'StoragePath', 'Keystore', 'Bluetooth', 'Screenshot',
 #            'STT', 'DeviceName')
 
-__all__ = ('Camera',)
+__all__ = ("Camera",)
 
 # from plyer.facades.accelerometer import Accelerometer
 # from plyer.facades.audio import Audio
@@ -22,6 +22,7 @@ __all__ = ('Camera',)
 # from plyer.facades.battery import Battery
 # from plyer.facades.call import Call
 from plyer.facades.camera import Camera
+
 # from plyer.facades.compass import Compass
 # from plyer.facades.email import Email
 # from plyer.facades.filechooser import FileChooser

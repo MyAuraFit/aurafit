@@ -1,14 +1,14 @@
 __all__ = ("Divider",)
 
+from pathlib import Path
+
 from kivy.clock import Clock
-from kivy.metrics import dp
+from kivy.lang import Builder
 from kivy.properties import ColorProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 
-from kivy.lang import Builder
-from os.path import join, dirname, basename
-
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class Divider(BoxLayout):

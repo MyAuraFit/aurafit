@@ -3,13 +3,14 @@ __all__ = (
     "OtpSheet",
 )
 
-from os.path import join, dirname, basename
+from pathlib import Path
 
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import mainthread
 from kivy.clock import triggered
 from kivy.core.window import Window
+from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import (
@@ -18,6 +19,8 @@ from kivy.properties import (
     StringProperty,
     BooleanProperty,
     ObjectProperty,
+    ListProperty,
+    DictProperty,
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
@@ -25,8 +28,10 @@ from kivy.uix.modalview import ModalView
 from kivy.utils import platform
 
 from components.behaviors import AdaptiveBehavior
+from components.label import CustomLabel
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 def _handle_keyboard(self, _window, key, *_args):
@@ -154,3 +159,125 @@ class OtpSheet(BaseSheet, AdaptiveBehavior):
 
     def on_resend_otp(self):
         pass
+
+
+class MoodOccasionSelectionSheet(BaseSheet):
+    group = StringProperty()
+    title = StringProperty()
+    occasion = ListProperty(
+        [
+            "Birthday Party",
+            "Date Night",
+            "Wedding",
+            "Night Out",
+            "Casual Outing",
+            "Work Meeting",
+            "Office Day",
+            "Interview",
+            "Dinner",
+            "Lunch",
+            "Brunch",
+            "Travel",
+            "Airport Outfit",
+            "Beach",
+            "Pool Party",
+            "Gym / Workout",
+            "Sports Event",
+            "Concert",
+            "Festival",
+            "Religious Service",
+            "Traditional Event",
+            "Graduation",
+            "Photoshoot",
+            "Shopping",
+            "House Party",
+            "Romantic Evening",
+            "Stay Home / Lounge",
+        ]
+    )
+    mood = DictProperty(
+        {
+            "Social / Party": [
+                "confident",
+                "bold",
+                "playful",
+                "flirty",
+                "energetic",
+                "expressive",
+            ],
+            "Romantic / Date": [
+                "romantic",
+                "seductive",
+                "charming",
+                "passionate",
+                "intimate",
+                "alluring",
+                "soft",
+                "sweet",
+            ],
+            "Professional / Work": [
+                "business",
+                "sharp",
+                "powerful",
+                "polished",
+                "elegant",
+                "dignified",
+                "minimal",
+                "authoritative",
+            ],
+            "Casual / Everyday": [
+                "casual",
+                "relaxed",
+                "comfortable",
+                "unstructured",
+                "loose",
+                "informal",
+                "unconventional",
+                "unstructured",
+                "natural",
+                "chill",
+                "effortless",
+            ],
+            "Fashion / Trendy": [
+                "edgy",
+                "stylish",
+                "modern",
+                "experimental",
+                "aesthetic",
+            ],
+        }
+    )
+
+    def on_open(self, *_):
+        if self.group == "occasion":
+            for occasion in self.occasion:
+                btn = Factory.MoodOccasionButton(
+                    text=occasion,
+                    group=self.group,
+                )
+                btn.bind(active=self.on_occasion_active)
+                self.ids.stack.add_widget(btn)
+        else:
+            for mood in self.mood:
+                self.ids.stack.add_widget(
+                    CustomLabel(
+                        text=mood, bold=True, font_size="28sp", adaptive_height=True
+                    )
+                )
+                for m in self.mood[mood]:
+                    btn = Factory.MoodOccasionButton(
+                        text=m,
+                        group=self.group,
+                    )
+                    btn.bind(active=self.on_mood_active)
+                    self.ids.stack.add_widget(btn)
+
+    def on_occasion_active(self, instance, value):
+        if value:
+            self.screen.ids.occasion_text_input.text = instance.text
+            self.dismiss()
+
+    def on_mood_active(self, instance, value):
+        if value:
+            self.screen.ids.mood_text_input.text = instance.text
+            self.dismiss()

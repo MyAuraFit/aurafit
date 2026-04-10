@@ -184,7 +184,7 @@ API break
 
 __all__ = ("CircularProgressIndicator", "LinearProgressIndicator")
 
-from os.path import join, dirname, basename
+from pathlib import Path
 
 from kivy.animation import Animation
 from kivy.clock import Clock
@@ -202,7 +202,8 @@ from kivy.properties import (
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.widget import Widget
 
-Builder.load_file(join(dirname(__file__), basename(__file__).split(".")[0] + ".kv"))
+kv_file_path = Path(__file__).with_suffix(".kv")
+Builder.load_file(str(kv_file_path))
 
 
 class LinearProgressIndicator(ProgressBar):
