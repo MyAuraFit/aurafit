@@ -120,7 +120,7 @@ class UploadSelectionSheet(BaseSheet, AdaptiveBehavior):
         image_path = get_filename(filename)
         with open(image_path, "wb") as f:
             f.write(data[0].tostring())
-        self._add_image(image_path)
+        self._add_image(str(image_path))
         self.screen.to_be_deleted.append(image_path)
         return False
 
