@@ -19,7 +19,6 @@ class AppScreenManager(ScreenManager):
 
     screen_config = DictProperty(
         {
-            "login screen": ("features.login", "LoginScreen"),
             "home screen": ("features.home", "HomeScreen"),
             "wardrobe screen": ("features.wardrobe", "WardrobeScreen"),
             "outfits screen": ("features.outfits", "OutfitsScreen"),
@@ -30,6 +29,8 @@ class AppScreenManager(ScreenManager):
             "account screen": ("features.account", "AccountScreen"),
             "view screen": ("features.view", "ViewScreen"),
             "upload screen": ("features.upload", "UploadScreen"),
+            "splash screen": ("features.splash", "SplashScreen"),
+            "subscription screen": ("features.subscription", "SubscriptionScreen"),
         }
     )
     app = ObjectProperty()

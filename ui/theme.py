@@ -1,3 +1,4 @@
+from kivy.clock import mainthread
 from kivy.core.window import Window
 from kivy.event import EventDispatcher
 from kivy.properties import ColorProperty, OptionProperty
@@ -58,3 +59,20 @@ class ThemeManager(EventDispatcher):
 
         Window.clearcolor = self.bg_color
         Window.update_viewport()
+
+    @mainthread
+    def set_theme_style(self, is_dark_mode: bool):
+        self.theme_style = "Dark" if is_dark_mode else "Light"
+
+    @staticmethod
+    def set_bar_foreground_theme(color):
+        from kvdroid.tools import change_statusbar_color, navbar_color
+
+        change_statusbar_color(
+            [0, 0, 0, 0],
+            color,
+        )
+        navbar_color(
+            [0, 0, 0, 0],
+            color,
+        )

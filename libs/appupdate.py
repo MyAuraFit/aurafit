@@ -1,4 +1,7 @@
+from typing import Callable
+
 from android.runnable import run_on_ui_thread  # noqa
+from kvdroid import activity
 from sjappupdate.jclass import (
     AppUpdateManagerFactory,
     AppUpdateManager,
@@ -10,16 +13,17 @@ from sjappupdate.jclass import (
 from sjappupdate.jinterface import OnSuccessListener, OnCompleteListener
 from sjplayservicecommon.jclass import GoogleApiAvailability, ConnectionResult
 
-from kvdroid import activity
-
 
 class AppUpdate:
     __app_update_manager: AppUpdateManager = None
+    __google_api_availability: GoogleApiAvailability = (
+        GoogleApiAvailability.getInstance()
+    )
     __on_success_listener = None
     __on_complete_listener = None
 
     @classmethod
-    def _initialize(cls, callback):
+    def _initialize(cls, callback: Callable[[AppUpdateInfo], None]):
         cls.__app_update_manager = AppUpdateManagerFactory.create(activity)
         app_update_info_task = cls.__app_update_manager.getAppUpdateInfo()
         cls.__on_success_listener = OnSuccessListener(callback)
@@ -27,33 +31,20 @@ class AppUpdate:
 
     @classmethod
     @run_on_ui_thread
-    def check_for_update(cls):
-        google_api_availability: GoogleApiAvailability = (
-            GoogleApiAvailability.getInstance()
-        )
-        result = google_api_availability.isGooglePlayServicesAvailable(activity)
-        print(result)
+    def _run_with_play_services(cls, callback: Callable[[AppUpdateInfo], None]):
+        result = cls.__google_api_availability.isGooglePlayServicesAvailable(activity)
         if result == ConnectionResult.SUCCESS:
-            cls._initialize(cls._is_update_allowed)
-        elif google_api_availability.isUserResolvableError(result):
-            print("not available")
-            done = google_api_availability.showErrorDialogFragment(activity, result, 0)
-            print(done)
+            cls._initialize(callback)
+        elif cls.__google_api_availability.isUserResolvableError(result):
+            cls.__google_api_availability.showErrorDialogFragment(activity, result, 0)
 
     @classmethod
-    @run_on_ui_thread
+    def check_for_update(cls):
+        cls._run_with_play_services(cls._is_update_allowed)
+
+    @classmethod
     def continue_update(cls):
-        google_api_availability: GoogleApiAvailability = (
-            GoogleApiAvailability.getInstance()
-        )
-        result = google_api_availability.isGooglePlayServicesAvailable(activity)
-        print(result)
-        if result == ConnectionResult.SUCCESS:
-            cls._initialize(cls._is_already_running)
-        elif google_api_availability.isUserResolvableError(result):
-            print("not available")
-            done = google_api_availability.showErrorDialogFragment(activity, result, 0)
-            print(done)
+        cls._run_with_play_services(cls._is_already_running)
 
     @classmethod
     def _is_already_running(cls, app_update_info: AppUpdateInfo):
@@ -81,11 +72,10 @@ class AppUpdate:
             activity,
             AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build(),
         )
-        cls.on_complete_listener = OnCompleteListener(cls._restart_if_failed)
+        cls.__on_complete_listener = OnCompleteListener(cls._restart_if_failed)
         task.addOnCompleteListener(cls.__on_complete_listener)
 
     @classmethod
     def _restart_if_failed(cls, task):
         if task.isSuccessful() and task.getResult() != activity.RESULT_OK:
-            print("failed", task.getResult())
             cls.check_for_update()

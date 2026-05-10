@@ -31,7 +31,7 @@ class CustomLabel(AdaptiveBehavior, Label):
     shadow_color = ColorProperty([0, 0, 0, 0])
     line_color = ColorProperty([0, 0, 0, 0])
     line_width = NumericProperty(1)
-    spread_radius = ListProperty([dp(-4), dp(-4)])
+    spread_radius = ListProperty([dp(-3), dp(-3)])
 
     def get_max_characters(self):
         lbl.font_size = self.font_size

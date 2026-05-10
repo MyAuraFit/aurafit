@@ -11,10 +11,10 @@
 #:set primary_color "#2962ff"
 #:set icon_path "assets/fonts/materialdesignicons-webfont.ttf"
 
-#<TouchRippleBehavior>:
-#    ripple_duration_in: .7
-#    ripple_duration_out: .5
-#    ripple_color: app.theme_cls.card_color
+<TouchRippleBehavior>:
+    ripple_duration_in: 0
+    ripple_duration_out: 0
+    ripple_color: app.theme_cls.transparent_color
 
 <StencilBoxLayout@CustomBoxLayout+StencilBehavior>
 
@@ -91,176 +91,7 @@
     canvas.after:
         Clear
 
-<PremiumPurchaseSheet>
-    -padding: 0
-    radius: 0
-    RelativeLayout:
-        CoverImage:
-            id: image
-            color: [0, 0, 0, 0] if not self.source else "white"
-        IconButton:
-            size: "35sp", "35sp"
-            radius: self.height / 2
-            icon: "close"
-            bg_color: app.theme_cls.card_color[:3] + [.5]
-            color: app.theme_cls.text_color_dark
-            pos_hint: {"right": .9, "top": .8}
-            on_release: root.dismiss()
-    CustomBoxLayout:
-        id: bottom
-        padding: "20dp", "20dp", "20dp", dp(20) + app.navbar_height
-        adaptive_height: True
-        spacing: "20dp"
-        orientation: "vertical"
-        CustomBoxLayout:
-            orientation: "vertical"
-            spacing: "5dp"
-            adaptive_height: True
-            Benefits:
-                text: "Enjoy up to 14 days free trial"
-            Benefits:
-                text: "Predict your farm yield without ads"
-            Benefits:
-                text: "Access to Crop Analytics without ads"
-            Benefits:
-                text: "Chat with Farmi-AI without ads"
-        CustomBoxLayout:
-            adaptive_height: True
-            spacing: "10dp"
-            ButtonBoxLayout:
-                line_color: app.theme_cls.primary_color
-                line_width: "2dp"
-                orientation: "vertical"
-                size_hint_y: None
-                height: "150dp"
-                radius: "10dp"
-                bg_color: app.theme_cls.card_color
-                disabled: spinner1.active
-                on_release: root.launch_billing_flow(yearly.index)
-                RelativeLayout:
-                    CustomBoxLayout:
-                        orientation: "vertical"
-                        CustomLabel:
-                            font_size: "13sp"
-                            bold: True
-                            text: "MOST POPULAR"
-                            adaptive_height: True
-                            halign: "center"
-                            radius: "10dp", "10dp", 0, 0
-                            padding: 0, "3.5dp"
-                            color: app.theme_cls.text_color_dark
-                            bg_color: app.theme_cls.primary_color
-                        CustomLabel:
-                            text: "14-DAY\nFREE TRIAL"
-                            padding: "20dp", 0
-                            bold: True
-                            font_size: "16sp"
-                            halign: "center"
-                        CustomLabel:
-                            id: yearly
-                            index: 0
-                            price: ""
-                            text: "Then {}/year".format(self.price)
-                            adaptive_height: True
-                            font_size: "12sp"
-                            halign: "center"
-                            padding: "10dp", 0, "10dp", "20dp"
-                            bold: True
-                    CircularProgressIndicator:
-                        id: spinner1
-                        active: True
-                        size_hint: None, None
-                        size: "20dp", "20dp"
-                        pos_hint: {"center": [.5, .5]}
-                        line_width: 2
-            ButtonBoxLayout:
-                orientation: "vertical"
-                size_hint_y: None
-                height: "150dp"
-                radius: "10dp"
-                bg_color: app.theme_cls.card_color
-                disabled: spinner2.active
-                on_release: root.launch_billing_flow(monthly.index)
-                RelativeLayout:
-                    CustomBoxLayout:
-                        orientation: "vertical"
-                        CustomLabel:
-                            text: "Monthly"
-                            font_size: "14sp"
-                            halign: "center"
-                        CustomLabel:
-                            text: "7-DAY\nFREE TRIAL"
-                            padding: "20dp", 0
-                            bold: True
-                            font_size: "16sp"
-                            halign: "center"
-                        CustomLabel:
-                            id: monthly
-                            index: 0
-                            price: ""
-                            text: "Then {}/month".format(self.price)
-                            font_size: "12sp"
-                            halign: "center"
-                            bold: True
-                    CircularProgressIndicator:
-                        id: spinner2
-                        active: True
-                        size_hint: None, None
-                        size: "20dp", "20dp"
-                        pos_hint: {"center": [.5, .5]}
-                        line_width: 2
-        CustomBoxLayout:
-            adaptive_height: True
-            orientation: "vertical"
-            spacing: "10dp"
-            MagicButton:
-                id: btn
-                adaptive_height: True
-                padding: "30dp", "20dp"
-                font_size: "18sp"
-                radius: self.height / 2
-                text: "Try for Free"
-                pos_hint: {"center_x": .5}
-                bold: True
-                line_color: app.theme_cls.text_color
-                pos: root.width - self.width - dp(20), "40dp"
-                disabled: spinner1.active
-                on_release: root.launch_billing_flow(yearly.index)
-            CustomLabel:
-                text: "Google play will send a reminder 2 days before your trial ends"
-                font_size: "10sp"
-                adaptive_height: True
-                halign: "center"
-                bg_color: app.theme_cls.card_color
-                line_color: app.theme_cls.text_color
-                line_width: 1
-                padding: "10dp"
-                radius: self.height / 2
-            CustomLabel:
-                font_size: "10sp"
-                adaptive_height: True
-                text:
-                    "Payment will be charged to your Google Play account at the end of your trial " \
-                    "or confirmation of purchase if you are not starting a trial. Subscription automatically " \
-                    "renews unless it is canceled at least 24 hours before end of your trial or current period. "\
-                    "Your account will be charged for renewal within 24 hours prior to the end of the current " \
-                    "period. You can manage and cancel your subscriptions in settings in the google Google play "\
-                    "store."
-
-<Benefits@CustomBoxLayout>
-    adaptive_height: True
-    spacing: "10dp"
-    text: ""
-    Icon:
-        icon: "check-circle"
-        color: app.theme_cls.primary_color
-    CustomLabel:
-        text: root.text
-        adaptive_height: True
-        font_size: "14sp"
-        pos_hint: {"center_y": .5}
-
-<SubscribedSheet>
+<PurchasedSheet>
     -padding: "20dp", "40dp", "20dp", app.navbar_height + dp(40)
     spacing: "20dp"
     Icon:
@@ -270,14 +101,13 @@
         color: app.theme_cls.primary_color
     CustomLabel:
         adaptive_height: True
-        text: "Subscription successfully"
+        text: "Congratulations"
         bold: True
         font_size: "32sp"
         halign: "center"
     CustomLabel:
         adaptive_height: True
-        text: "Thank you for subscribing to Farmi-AI. You will receive email with your subscription details."
-        font_size: "14sp"
+        text: "You have successfully unlocked your signature style and your coins have been added to your account. "
         color: app.theme_cls.text_color[:3] + [.7]
         halign: "center"
 
@@ -293,3 +123,21 @@
     shadow_color: app.theme_cls.shadow_color
     line_color: app.theme_cls.text_color[:3] + [.3]
     spread_radius: -dp(3), -dp(3)
+
+<DisconnectSheet>
+    CustomBoxLayout:
+        adaptive_height: True
+        spacing: "10dp"
+        CustomLabel:
+            adaptive_height: True
+            text: root.text
+            halign: "center"
+            font_size: "16sp"
+            pos_hint: {"center_y": .5}
+            markup: True
+            on_ref_press: root.dispatch("on_ref_press")
+        IconButton:
+            icon: root.icon
+            bg_color: app.theme_cls.accent_color
+            radius: "10dp"
+            pos_hint: {"top": 1}

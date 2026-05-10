@@ -1,0 +1,35 @@
+<ProductWidget>
+    allow_no_selection: False
+    radius: "16dp"
+    adaptive_height: True
+    spacing: "10dp"
+    padding: "20dp", "15dp"
+    line_width: "1dp" if self.active else 1
+    bg_color: app.theme_cls.card_color[:3] + [.7]
+    line_color: app.theme_cls.primary_color if self.active else app.theme_cls.primary_color[:3] + [.7]
+    Icon:
+        icon: "checkbox-marked-circle" if root.active else "checkbox-blank-circle-outline"
+        pos_hint: {"center_y": .5}
+        -color: app.theme_cls.primary_color
+    CustomBoxLayout:
+        adaptive_height: True
+        orientation: "vertical"
+        CustomLabel:
+            adaptive_height: True
+            font_size: "16sp"
+            text: root.title
+            bold: True
+            -color: app.theme_cls.primary_color
+        CustomLabel:
+            adaptive_height: True
+            font_size: "12sp"
+            bold: True
+            text: "{} Pack".format(root.name)
+            -color: app.theme_cls.primary_color[:3] + [.8]
+    CustomLabel:
+        adaptive_size: True
+        text: f"{{:,.2f}} {{}}{{}}[size={int(sp(10))}]{{}}[/size]".format(root.amount, root.currency, root.slash, root.period)
+        pos_hint: {"center_y": .5}
+        bold: True
+        markup: True
+        -color: app.theme_cls.primary_color

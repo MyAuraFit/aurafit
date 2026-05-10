@@ -1,4 +1,3 @@
-from android.runnable import run_on_ui_thread  # noqa
 from kivy.clock import Clock
 from sjadmob.jclass import (
     MobileAds,
@@ -13,19 +12,18 @@ from sjadmob.jinterface import (
     OnUserEarnedRewardListener,
 )
 
+from android.runnable import run_on_ui_thread  # noqa
 from kvdroid import activity
 from kvdroid.tools import toast
 
 
 class Ads:
-    app = None
     rewarded_ad = None
     is_loading_ad = False
     is_showing_ad = False
 
     @classmethod
-    def initialize(cls, app):
-        cls.app = app
+    def initialize(cls):
         MobileAds.initialize(activity)
 
     @classmethod

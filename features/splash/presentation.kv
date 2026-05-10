@@ -1,0 +1,53 @@
+<SplashScreen>:
+    name: "splash screen"
+    Image:
+        fit_mode: "cover"
+        source: "assets/images/splash.jpeg"
+    Gradient:
+        color_end: app.theme_cls.bg_color[:3] + [0]
+        color_start: app.theme_cls.bg_color
+        size_hint_y: None
+        height: bottom.height
+        canvas.before:
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    CustomBoxLayout:
+        id: bottom
+        adaptive_height: True
+        padding: "20dp", "20dp", "20dp", app.navbar_height + dp(20)
+        orientation: "vertical"
+        spacing: "10dp"
+        CustomLabel:
+            text: "Your Signature Style"
+            font_size: "65sp"
+            line_height: 0.8
+            bold: True
+            -color: "white"
+            adaptive_height: True
+            padding: 0, 0, 0, "40dp"
+        MagicButton:
+            id: btn
+            magic_speed: 0.3
+            adaptive_size: True
+            padding: "30dp", "20dp"
+            font_size: "18sp"
+            radius: self.height / 2
+            size_hint_x: 1
+            text: f"Start Exploring"
+            pos_hint: {"center_x": .5}
+            markup: True
+            bold: True
+            line_color: app.theme_cls.bg_color_dark
+            on_release: root.launch_credential_manager()
+        CustomButton:
+            adaptive_height: True
+            padding: "20dp", "20dp"
+            pos_hint: {"center_x": .5}
+            text_size: self.width, None
+            -bg_color: app.theme_cls.transparent_color
+            -color: app.theme_cls.text_color
+            markup: True
+            text: "By using [u]My Aurafit[/u], you agree to our [u]Terms and Privacy Policy[/u]"
+            halign: "center"
+            font_size: "13sp"

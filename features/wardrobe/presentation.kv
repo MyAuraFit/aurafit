@@ -3,7 +3,7 @@
     BoxLayout:
         orientation: "vertical"
         CustomBoxLayout:
-            padding: "20dp"
+            padding: "20dp", "10dp"
             adaptive_height: True
             spacing: "15dp"
             CustomLabel:
@@ -28,22 +28,36 @@
                 pos_hint: {"center_y": .5}
                 shadow_color: app.theme_cls.shadow_color
                 on_release: root.manager.current = "account screen"
-        RecycleView:
-            id: rv
-            viewclass: "WardrobeItem"
-            effect_cls: "ScrollEffect"
-            scroll_distance: 0
-            bar_width: 0
-            do_scroll_x: False
-            RecycleGridLayout:
-                id: rv_grid
-                size_hint_y: None
-                cols: 3
-                height: self.minimum_height
-                padding: 0, 0, 0, "100dp"
-                spacing: "1dp"
-                default_size_hint: 1, None
-                default_size: 0, self.width/3
+        CustomBoxLayout:
+            adaptive_height: True
+            padding: "20dp", "10dp", "20dp", "20dp"
+            spacing: "20dp"
+            WardrobeTab:
+                text: "Clothes"
+                active: True
+                on_active:
+                    if args[1]: sm.current = "clothes";\
+                    spinner.active = False;\
+                    root.get_wardrobe_items(item_collection="clothes", rv_id="clothes_rv")\
+                    if not clothes_rv.data else None;
+            WardrobeTab:
+                text: "Selfies"
+                on_active:
+                    if args[1]: sm.current = "selfies";\
+                    spinner.active = False;\
+                    root.get_wardrobe_items(item_collection="selfies", rv_id="selfies_rv")\
+                    if not selfies_rv.data else None;
+        ScreenManager:
+            id: sm
+            transition: NoTransition()
+            Screen:
+                name: "clothes"
+                WardrobeRecycleView:
+                    id: clothes_rv
+            Screen:
+                name: "selfies"
+                WardrobeRecycleView:
+                    id: selfies_rv
     CircularProgressIndicator:
         id: spinner
         active: False
@@ -55,3 +69,33 @@
         y: "80dp"
 
 <WardrobeItem@TouchRippleButtonBehavior+CoverImage>
+
+<WardrobeTab@ToggleButtonBehavior+CustomLabel>:
+    group: "wardrobe_tab"
+    pos_hint: {"center_x": .5}
+    size_hint_y: None
+    height: "35dp"
+    radius: "12dp"
+    halign: "center"
+    color: app.theme_cls.bg_color if self.active else app.theme_cls.text_color
+    bold: True
+    bg_color: app.theme_cls.primary_color if self.active else app.theme_cls.bg_color
+    shadow_color: app.theme_cls.shadow_color
+    line_color: app.theme_cls.text_color[:3] + [.3]
+    spread_radius: -dp(5), -dp(5)
+
+<WardrobeRecycleView@RecycleView>:
+    viewclass: "WardrobeItem"
+    effect_cls: "ScrollEffect"
+    scroll_distance: 0
+    bar_width: 0
+    do_scroll_x: False
+    RecycleGridLayout:
+        id: rv_grid
+        size_hint_y: None
+        cols: 3
+        height: self.minimum_height
+        padding: 0, 0, 0, "100dp"
+        spacing: "1dp"
+        default_size_hint: 1, None
+        default_size: 0, self.width/3

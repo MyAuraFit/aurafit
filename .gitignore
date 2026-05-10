@@ -6,3 +6,10 @@
 /kvdroid/
 /.buildozer/
 /main.py.orig
+/examples/
+/sjbillingclient/
+/sjappupdate/
+/build-sign-apk.sh
+/sjadmob/
+/bin/
+/.kivy/

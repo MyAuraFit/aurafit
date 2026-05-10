@@ -1,4 +1,4 @@
-from kivy.clock import mainthread
+from kivy.clock import mainthread, Clock
 
 from kvdroid import activity
 from sjcredentials import (
@@ -12,26 +12,25 @@ from sjgoogleid.jclass import GoogleIdTokenCredential
 
 
 class GoogleAuthMixin(AuthMixin, UserMixin, FirestoreMixin):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        google_id_option = get_google_id_option()
-        self.launch_credential_manager(google_id_option)
-        self.app.open_dialog()
-
     def signup_with_google(self):
         google_option = get_signin_with_google_option()
         self.launch_credential_manager(google_option)
         self.app.open_dialog()
 
-    def launch_credential_manager(self, option):
-        request = get_credential_request(option)
+    def launch_credential_manager(self):
+        self.app.open_dialog()
+        request = get_credential_request(get_google_id_option())
         credential_manager = create_credential_manager(activity)
         get_credential_async(
             credential_manager,
             activity,
             request,
             on_result=self.handle_sign_in,
-            on_error=lambda _: (self.app.dismiss_dialog(), print(_)),
+            on_error=lambda _: {
+                self.app.dismiss_dialog(),
+                print(_),
+                Clock.schedule_once(lambda _: self.app.pop_disconnect_sheet()),
+            },
         )
 
     @mainthread

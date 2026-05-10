@@ -1,11 +1,12 @@
-__all__ = ("CoinScreen",)
+__all__ = ("SubscriptionScreen",)
 
 from pathlib import Path
 
-from kivy.clock import mainthread
+from kivy.clock import triggered, mainthread
 from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.behaviors import ToggleButtonBehavior
+from kivy.utils import platform
 
 from features.basescreen import BaseScreen
 from libs.billing import Billing
@@ -16,8 +17,7 @@ kv_file_path = Path(__file__).with_suffix(".kv")
 Builder.load_file(str(kv_file_path))
 
 
-class CoinScreen(BaseScreen, UserMixin):
-
+class SubscriptionScreen(BaseScreen, UserMixin):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.product_details = []
@@ -32,12 +32,29 @@ class CoinScreen(BaseScreen, UserMixin):
         )
         self.is_setup_finished = False
 
+    @triggered(3, True)
+    def animate_button(self):
+        self.ids.btn.grow()
+
     def on_enter(self):
+        if platform == "android":
+            self.app.theme_cls.set_bar_foreground_theme("white")
+
+        self.animate_button()
+        self.app.open_dialog()
         self.billing_client.start_connection()
 
     def on_leave(self):
+        if platform == "android":
+            from kvdroid.tools.darkmode import dark_mode
+
+            self.app.theme_cls.set_bar_foreground_theme(
+                "white" if dark_mode() else "black"
+            )
+        self.animate_button.cancel()
+        self.app.dismiss_dialog()
         self.billing_client.end_connection()
-        self.ids.inapp.clear_widgets()
+        self.ids.subs.clear_widgets()
         self.product_details.clear()
         self.product_details_list = None
 
@@ -45,7 +62,7 @@ class CoinScreen(BaseScreen, UserMixin):
         if is_response_ok:
             self.is_setup_finished = True
             self.billing_client.query_product_details(
-                "inapp", RemoteConfigDataSource.one_time_products()
+                "subs", RemoteConfigDataSource.subscriptions()
             )
 
     def on_billing_service_disconnected(self, _):
@@ -58,37 +75,37 @@ class CoinScreen(BaseScreen, UserMixin):
         self.product_details_list = product_details_list
         self.product_details = [
             self.billing_client.get_product_details(
-                product_type="inapp", product_detail=product_detail
+                product_type="subs", product_detail=product_detail
             )
             for product_detail in product_details_list
         ]
-        for product_detail in self.product_details:
-            self._add_product_widget(product_detail)
+        for detail in self.product_details:
+            for offer in detail.offer_details:
+                self._add_product_widget(detail.product_id, offer)
         self.app.dismiss_dialog()
 
-    def _add_product_widget(self, product_detail):
-        offer_detail = product_detail.offer_details[0]
-        if product_detail.product_id == "stylist_pack":
-            self.ids.btn.amount = offer_detail.price_amount_micros / 1_000_000
-            self.ids.btn.currency = offer_detail.price_currency_code
-        self.ids.inapp.add_widget(
+    def _add_product_widget(self, product_id, offer):
+        phase = offer.pricing_phases[0]
+        if offer.base_plan_id == "monthly":
+            self.ids.btn.amount = phase.price_amount_micros / 1_000_000
+            self.ids.btn.currency = phase.price_currency_code
+        self.ids.subs.add_widget(
             Factory.ProductWidget(
-                title=product_detail.name,
-                amount=offer_detail.price_amount_micros / 1_000_000,
-                product_id=product_detail.product_id,
-                currency=offer_detail.price_currency_code,
-                name=getattr(RemoteConfigDataSource, product_detail.product_id)(),
-                active=product_detail.product_id == "stylist_pack",
-                group="one_time_products",
-                slash="",
+                title=getattr(RemoteConfigDataSource, offer.base_plan_id)(),
+                amount=phase.price_amount_micros / 1_000_000,
+                product_id=product_id,
+                base_plan_id=offer.base_plan_id,
+                currency=phase.price_currency_code,
+                name=offer.base_plan_id,
+                period=offer.base_plan_id,
+                active=offer.base_plan_id == "monthly",
+                group="subscriptions",
                 on_product_selected=lambda *_: {
                     setattr(  # noqa
-                        self.ids.btn,
-                        "amount",
-                        offer_detail.price_amount_micros / 1_000_000,
+                        self.ids.btn, "amount", phase.price_amount_micros / 1_000_000
                     ),
                     setattr(  # noqa
-                        self.ids.btn, "currency", offer_detail.price_currency_code
+                        self.ids.btn, "currency", phase.price_currency_code
                     ),
                 },
             )
@@ -101,6 +118,7 @@ class CoinScreen(BaseScreen, UserMixin):
                 from sjbillingclient.jclass.purchase import PurchaseState
 
                 if purchase.getPurchaseState() == PurchaseState.PURCHASED:
+                    self.manager.go_back()
                     Factory.PurchasedSheet().open()
                     return
 
@@ -108,21 +126,19 @@ class CoinScreen(BaseScreen, UserMixin):
 
     def launch_billing_flow(self):
         widget = next(
-            (
-                w
-                for w in ToggleButtonBehavior.get_group("one_time_products")
-                if w.active
-            ),
+            (w for w in ToggleButtonBehavior.get_group("subscriptions") if w.active),
             None,
         )
         if widget is None:
             return
-        for i, product_detail in enumerate(self.product_details):
-            if product_detail.product_id == widget.product_id:  # type: ignore
-                offer_detail = product_detail.offer_details[0]
-                self.billing_client.launch_billing_flow(
-                    product_details=[self.product_details_list.get(i)],
-                    offer_token=offer_detail.offer_token,
-                    obfuscated_account_id=self.get_uid(),
-                )
-                return
+        for i, detail in enumerate(self.product_details):
+            if detail.product_id != widget.product_id:  # type: ignore
+                continue
+            for offer in detail.offer_details:
+                if offer.base_plan_id == widget.base_plan_id:  # type: ignore
+                    self.billing_client.launch_billing_flow(
+                        product_details=[self.product_details_list.get(i)],
+                        offer_token=offer.offer_token,
+                        obfuscated_account_id=self.get_uid(),
+                    )
+                    return

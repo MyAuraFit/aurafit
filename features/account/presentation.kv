@@ -57,13 +57,14 @@
                         orientation: "vertical"
                         pos_hint: {"center_y": .5}
                         CustomLabel:
-                            text: "Kenechukwu Akubue"
+                            id: name
+                            text: root.get_display_name()
                             bold: True
                             adaptive_height: True
                             shorten_from: "right"
                             shorten: True
                         CustomLabel:
-                            text: "kengoon19@gmail.com"
+                            text: root.get_email()
                             adaptive_height: True
                             font_size: "14sp"
                             bold: True

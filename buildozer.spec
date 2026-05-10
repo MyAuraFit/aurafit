@@ -13,7 +13,7 @@ package.domain = com
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf
+source.include_exts = py,png,jpg,kv,atlas,ttf,jpeg
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -29,7 +29,7 @@ source.exclude_dirs = tests, bin, venv, .venv, cache, python-for-android, .kivy,
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.1.16
+version = 0.4
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -47,7 +47,7 @@ requirements = python3,kivy==master,kvdroid,androidstorage4kivy,sjfirebaseai,sjf
 #presplash.filename = %(source.dir)s/assets/images/presplash.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/assets/images/icon.png
+icon.filename = %(source.dir)s/assets/images/icon.png
 
 # (list) Supported orientations
 # Valid options are: landscape, portrait, portrait-reverse or landscape-reverse
@@ -95,8 +95,7 @@ fullscreen = 0
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-android.permissions = android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=28),
-    READ_EXTERNAL_STORAGE, READ_MEDIA_IMAGES
+android.permissions = android.permission.INTERNET
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
@@ -159,7 +158,7 @@ android.ndk_api = 24
 #android.service_class_name = org.kivy.android.PythonService
 
 # (str) Android app theme, default is ok for Kivy-based app
-#android.apptheme = @style/Theme.App
+android.apptheme = @style/Theme.App.Starting
 
 # (list) Pattern to whitelist for the whole project
 #android.whitelist =
@@ -178,7 +177,7 @@ android.ndk_api = 24
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
-#android.add_src = java
+android.add_src = java
 
 # (list) Android AAR archives to add
 #android.add_aars =
@@ -209,8 +208,9 @@ android.gradle_dependencies = io.github.simplejnius:sjfirebase:1.3.0,
     androidx.credentials:credentials-play-services-auth:1.3.0,com.google.android.gms:play-services-ads:24.6.0,
     com.google.android.libraries.identity.googleid:googleid:1.1.1,com.google.firebase:firebase-config,
     com.google.firebase:firebase-analytics,com.google.firebase:firebase-appcheck-playintegrity,
-    com.android.billingclient:billing:8.0.0,com.google.android.play:review:2.0.2,
-    com.google.android.play:app-update:2.1.0,com.google.firebase:firebase-messaging
+    com.android.billingclient:billing:8.3.0,com.google.android.play:review:2.0.2,
+    com.google.android.play:app-update:2.1.0,com.google.firebase:firebase-messaging,
+    androidx.core:core-splashscreen:1.2.0
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
@@ -269,7 +269,7 @@ android.enable_androidx = True
 #android.wakelock = False
 
 # (list) Android application meta-data to set (key=value format)
-android.meta_data = com.google.android.gms.ads.APPLICATION_ID=ca-app-pub-2754450796751384~3553095873
+android.meta_data = com.google.android.gms.ads.APPLICATION_ID=ca-app-pub-8921459519197001~5181046899
 #    com.google.firebase.messaging.default_notification_channel_id=firebase
 
 # (list) Android library project to add (will be added in the

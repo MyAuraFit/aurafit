@@ -24,17 +24,6 @@ class ViewScreen(BaseScreen):
         self.app.theme_cls.theme_style = "Dark"
         self.ids.btn_box.disabled = True
         self.ids.spinner.active = True
-        if platform == "android":
-            from kvdroid.tools import change_statusbar_color, navbar_color
-
-            change_statusbar_color(
-                [0, 0, 0, 0],
-                "white",
-            )
-            navbar_color(
-                [0, 0, 0, 0],
-                "white",
-            )
         data = self.get_screen_data()
         self.ids.image.loading_image = data.placeholder_image
         self.ids.image.source = data.image_url
@@ -42,18 +31,10 @@ class ViewScreen(BaseScreen):
             self.save_outfit(self.ids.image.texture)
 
     def on_leave(self, *args):
-        self.app.theme_cls.theme_style = "Light"
         if platform == "android":
-            from kvdroid.tools import change_statusbar_color, navbar_color
+            from kvdroid.tools.darkmode import dark_mode
 
-            change_statusbar_color(
-                [0, 0, 0, 0],
-                "black",
-            )
-            navbar_color(
-                [0, 0, 0, 0],
-                "black",
-            )
+            self.app.theme_cls.theme_style = "Dark" if dark_mode() else "Light"
         self.ids.image.loading_image = ""
         self.ids.image.source = ""
         self.ids.spinner.active = False

@@ -1,17 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?><defaults>
+<defaults>
     <entry>
-        <key>aurafit_system_prompt</key>
-        <value>Act as a world-class fashion stylist and image consultant with 50+ years of experience dressing professionals, creatives, executives, and public figures across all genders and body types.
-            Your job is to create a complete, head-to-toe outfit plan that is stylish, flattering, elegant, practical, and perfectly aligned with the specific occasion based on the provided wardrobe details and make recommendations where necessary to achieve the desired style result.
-            * Consider the event formality and social expectations
-            * Consider the weather and comfort
-            * Consider the body proportions and fit
-            * Consider the message the wearer wants to communicate
-            Then design the outfit accordingly, and do not give generic advice. Make specific, thoughtful, and intentional styling decisions.
-        </value>
+        <key>subscriptions</key>
+        <value>["my_aurafit_pro"]</value>
     </entry>
     <entry>
-        <key>aurafit_model</key>
-        <value>gemini-3.1-flash-image-preview</value>
+        <key>one_time_products</key>
+        <value>["single_shot", "quick_pack", "stylist_pack", "fashion_pack"]</value>
+    </entry>
+    <entry>
+        <key>weekly</key>
+        <value>32 Coins</value>
+    </entry>
+    <entry>
+        <key>monthly</key>
+        <value>120 Coins</value>
+    </entry>
+    <entry>
+        <key>yearly</key>
+        <value>1200 Coins</value>
+    </entry>
+    <entry>
+        <key>single_shot</key>
+        <value>Single Shot</value>
+    </entry>
+    <entry>
+        <key>quick_pack</key>
+        <value>Quick Pack</value>
+    </entry>
+    <entry>
+        <key>stylist_pack</key>
+        <value>Stylist Pack</value>
+    </entry>
+    <entry>
+        <key>fashion_pack</key>
+        <value>Fashion Pack</value>
     </entry>
 </defaults>

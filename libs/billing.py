@@ -1,44 +1,97 @@
-from android.runnable import run_on_ui_thread  # noqa
-from kivy.clock import mainthread, triggered
-from kivy.event import EventDispatcher
-from kivy.properties import ListProperty, ObjectProperty
-from sjbillingclient.jclass.billing import BillingResponseCode, ProductType
-from sjbillingclient.jclass.purchase import PurchaseState
-from sjbillingclient.tools import BillingClient
+from typing import Literal
 
+from kivy.clock import triggered
+from kivy.event import EventDispatcher
+
+from android.runnable import run_on_ui_thread  # noqa
 from components.behaviors import AdaptiveBehavior
 from components.sheet import BaseSheet
+from sjbillingclient import QueryDict
+from sjbillingclient.jclass.billing import BillingResponseCode
+from sjbillingclient.tools import BillingClient
 
 
-class Billing:
-    __billing_client: BillingClient = None
-    app = None
-    event_manager = None
-    PRODUCT_ID_YEARLY = "yearly_with_trial"
-    PRODUCT_ID_MONTHLY = "monthly_with_trial"
-    sheet = None
-    _on_subscribed_listener = None
+class Billing(EventDispatcher):
+    __events__ = (
+        "on_billing_setup_finished",
+        "on_billing_service_disconnected",
+        "on_query_purchases_response",
+        "on_product_details_response",
+        "on_purchases_updated",
+        "on_acknowledge_purchase_response",
+    )
 
-    class EventManager(EventDispatcher):
-        product_details_java = ObjectProperty()
-        product_details = ListProperty()
-        unfetched_product = ListProperty()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__billing_client = None
 
-    @classmethod
-    def initialize(cls, app):
-        if not cls.__billing_client:
-            cls.app = app
-            cls.event_manager = cls.EventManager()
-            cls.__billing_client = BillingClient(
-                on_purchases_updated=cls.on_purchases_updated
-            )
-            cls.__billing_client.start_connection(
-                on_billing_setup_finished=cls.on_billing_setup_finished,
-                on_billing_service_disconnected=lambda: print("disconnected"),
-            )
+    def start_connection(self):
+        self.__billing_client = BillingClient(
+            on_purchases_updated=self.__on_purchases_updated
+        )
+        self.__billing_client.start_connection(
+            on_billing_setup_finished=self.__on_billing_setup_finished,
+            on_billing_service_disconnected=self.__on_billing_service_disconnected,
+        )
 
-    @classmethod
-    def on_billing_setup_finished(cls, billing_result):
+    def end_connection(self):
+        self.__billing_client.end_connection()
+        self.__billing_client = None
+
+    def is_ready(self) -> bool:
+        return self.__billing_client.is_ready()
+
+    def get_product_details(
+        self, product_type: Literal["subs", "inapp"], product_detail
+    ) -> QueryDict:
+        return self.__billing_client.get_product_details(
+            product_detail=product_detail,
+            product_type=product_type,
+        )
+
+    def query_product_details(
+        self, product_type: Literal["subs", "inapp"], product_ids: list[str]
+    ):
+        self.__billing_client.query_product_details_async(
+            product_type=product_type,
+            products_ids=product_ids,
+            on_product_details_response=self.__on_product_details_response,
+        )
+
+    def query_purchases(self, product_type: Literal["subs", "inapp"]):
+        self.__billing_client.query_purchases_async(
+            product_type=product_type,
+            on_query_purchases_response=self.__on_query_purchases_response,
+        )
+
+    def acknowledge_purchase(self, purchase_token: str):
+        self.__billing_client.acknowledge_purchase(
+            purchase_token=purchase_token,
+            on_acknowledge_purchase_response=self.__on_acknowledge_purchase_response,
+        )
+
+    @run_on_ui_thread
+    def launch_billing_flow(
+        self,
+        product_details,
+        offer_token=None,
+        obfuscated_account_id=None,
+        obfuscated_profile_id=None,
+    ):
+        self.__billing_client.launch_billing_flow(
+            product_details=product_details,
+            offer_token=offer_token,
+            obfuscated_account_id=obfuscated_account_id,
+            obfuscated_profile_id=obfuscated_profile_id,
+        )
+
+    def __on_billing_service_disconnected(self):
+        self.dispatch("on_billing_service_disconnected")
+
+    def on_billing_service_disconnected(self):
+        pass
+
+    def __on_billing_setup_finished(self, billing_result):
         """
         Handles the completion of the billing setup process.
 
@@ -52,34 +105,25 @@ class Billing:
         :type billing_result: BillingResult
         :return: None
         """
-
-        def on_query_purchases_response(result, purchases):
-            if result.getResponseCode() != BillingResponseCode.OK:
-                return
-
-            for purchase in purchases:
-                print(purchase.getPurchaseState(), purchase.isAcknowledged())
-                if (
-                    purchase.getPurchaseState() == PurchaseState.PURCHASED
-                    and purchase.isAcknowledged()
-                ):
-                    cls.app.is_premium = True
-                    cls.app.premium_product_id = purchase.getProducts().get(0)
-                else:
-                    cls.on_purchases_updated(result, False, [purchase])
-
-        cls.__billing_client.query_purchase_async(
-            ProductType.SUBS, on_query_purchases_response
+        self.dispatch(
+            "on_billing_setup_finished",
+            billing_result.getResponseCode() == BillingResponseCode.OK,
         )
-        if billing_result.getResponseCode() == BillingResponseCode.OK:
-            cls.__billing_client.query_product_details_async(
-                product_type=ProductType.SUBS,
-                products_ids=[cls.PRODUCT_ID_MONTHLY, cls.PRODUCT_ID_YEARLY],
-                on_product_details_response=cls.on_product_details_response,
-            )
 
-    @classmethod
-    def on_product_details_response(cls, billing_result, product_details_result):
+    def on_billing_setup_finished(self, is_response_ok):
+        pass
+
+    def __on_query_purchases_response(self, result, purchases):
+        self.dispatch(
+            "on_query_purchases_response",
+            result.getResponseCode() == BillingResponseCode.OK,
+            purchases,
+        )
+
+    def on_query_purchases_response(self, is_response_ok, purchases):
+        pass
+
+    def __on_product_details_response(self, billing_result, product_details_result):
         """
         Handles the response for product details fetch operation. The function processes
         the provided product details or unfetched product details as retrieved from the
@@ -99,25 +143,19 @@ class Billing:
         :type product_details_result: Any
         :return: None
         """
+        self.dispatch(
+            "on_product_details_response",
+            billing_result.getResponseCode() == BillingResponseCode.OK,
+            product_details_result.getProductDetailsList(),
+            product_details_result.getUnfetchedProductList(),
+        )
 
-        if billing_result.getResponseCode() == BillingResponseCode.OK:
-            product_details_list = product_details_result.getProductDetailsList()
-            unfetched_product_list = product_details_result.getUnfetchedProductList()
-            cls.event_manager.product_details = [
-                cls.__billing_client.get_product_details(
-                    product_detail, ProductType.SUBS
-                )
-                for product_detail in product_details_list
-            ]
-            cls.event_manager.unfetched_product = [
-                cls.__billing_client.get_unfetched_product(unfetched_product)
-                for unfetched_product in unfetched_product_list
-            ]
-            cls.event_manager.product_details_java = product_details_list
-            cls.app.is_billing_ready = True
+    def on_product_details_response(
+        self, is_response_ok, product_details_list, unfetched_product_list
+    ):
+        pass
 
-    @classmethod
-    def on_purchases_updated(cls, billing_result, null, purchases):
+    def __on_purchases_updated(self, billing_result, null, purchases):
         """
         Handles updates to the purchase state from the billing client.
 
@@ -137,17 +175,17 @@ class Billing:
         :type purchases: List[Any]
         :return: None
         """
-        if billing_result.getResponseCode() == BillingResponseCode.OK and not null:
-            for purchase in purchases:
-                cls.__billing_client.acknowledge_purchase(
-                    purchase_token=purchase.getPurchaseToken(),
-                    on_acknowledge_purchase_response=cls.on_acknowledge_purchase_response,
-                )
-                cls.app.premium_product_id = purchase.getProducts().get(0)
 
-    @classmethod
-    @mainthread
-    def on_acknowledge_purchase_response(cls, billing_result):
+        self.dispatch(
+            "on_purchases_updated",
+            billing_result.getResponseCode() == BillingResponseCode.OK and not null,
+            purchases,
+        )
+
+    def on_purchases_updated(self, is_response_ok, purchases):
+        pass
+
+    def __on_acknowledge_purchase_response(self, billing_result):
         """
         Handles the acknowledgment of a purchase response from the billing service.
 
@@ -159,83 +197,16 @@ class Billing:
         :type billing_result: BillingResult
         :return: None
         """
-        if billing_result.getResponseCode() == BillingResponseCode.OK:
-            cls.sheet.dismiss()
-            cls.app.is_premium = True
-            if cls._on_subscribed_listener:
-                cls._on_subscribed_listener()
-            SubscribedSheet().open()
-
-    @classmethod
-    @run_on_ui_thread
-    def launch_billing_flow(cls, product_details):
-        cls.__billing_client.launch_billing_flow(product_details=product_details)
-
-    @classmethod
-    def pop_premium_purchase_sheet(cls, on_subscribed=None):
-        cls._on_subscribed_listener = on_subscribed
-        cls.sheet = PremiumPurchaseSheet(screen=cls)
-        cls.sheet.open()
-
-
-class PremiumPurchaseSheet(BaseSheet):
-    product_details = ListProperty()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.modalview = type(
-            "DummyModalView",
-            (),
-            {
-                "open": lambda *_, **__: None,
-                "close": lambda *_, **__: None,
-                "dismiss": lambda *_, **__: None,
-            },
+        self.dispatch(
+            "on_acknowledge_purchase_response",
+            billing_result.getResponseCode() == BillingResponseCode.OK,
         )
-        if self.screen.event_manager.product_details:
-            self.product_details = self.screen.event_manager.product_details
-        else:
-            self.ids.spinner1.active = True
-            self.ids.spinner2.active = True
-            self.screen.event_manager.bind(
-                product_details=self.setter("product_details")
-            )
 
-    def on_product_details(self, _, value):
-        if not value:
-            return
-        self.ids.spinner1.active = False
-        self.ids.spinner2.active = False
-        for i, data in enumerate(value):
-            if data.product_id == self.screen.PRODUCT_ID_YEARLY:
-                self.ids.yearly.price = (
-                    data.offer_details[0].pricing_phases[-1].formatted_price
-                )
-                self.ids.yearly.index = i
-            else:
-                self.ids.monthly.price = (
-                    data.offer_details[0].pricing_phases[-1].formatted_price
-                )
-                self.ids.monthly.index = i
-
-    def launch_billing_flow(self, index):
-        product_details = self.screen.event_manager.product_details_java.get(index)
-        self.screen.launch_billing_flow([product_details])
-
-    @triggered(0.5)
-    def on_open(self, *args):
-        self.ids.image.source = "assets/images/premium.jpg"
-        self.animate_button()
-
-    @triggered(5, True)
-    def animate_button(self):
-        self.ids.btn.grow()
-
-    def on_dismiss(self, *args):
-        self.animate_button.cancel()
+    def on_acknowledge_purchase_response(self, is_response_ok):
+        pass
 
 
-class SubscribedSheet(BaseSheet, AdaptiveBehavior):
+class PurchasedSheet(BaseSheet, AdaptiveBehavior):
     @triggered(5)
     def on_open(self, *args):
         self.dismiss()

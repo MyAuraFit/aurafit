@@ -20,32 +20,41 @@ class WardrobeScreen(BaseScreen, FirestoreMixin, UserMixin):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.ids.rv.effect_y.bind(overscroll=self.on_overscroll)
-        self.get_clothes()
+        self.ids.clothes_rv.effect_y.bind(
+            overscroll=lambda *args: self.on_overscroll(
+                *args, item_collection="clothes", rv_id="clothes_rv"
+            )
+        )
+        self.ids.selfies_rv.effect_y.bind(
+            overscroll=lambda *args: self.on_overscroll(
+                *args, item_collection="selfies", rv_id="selfies_rv"
+            )
+        )
+        self.get_wardrobe_items(item_collection="clothes", rv_id="clothes_rv")
 
-    def on_overscroll(self, _, value):
+    def on_overscroll(self, _, value, item_collection, rv_id):
         if value > 0:
-            self.get_clothes()
+            self.get_wardrobe_items(item_collection=item_collection, rv_id=rv_id)
 
-    def get_clothes(self):
+    def get_wardrobe_items(self, item_collection, rv_id):
         if self.ids.spinner.active:
             return
         self.ids.spinner.active = True
         Direction = autoclass("com.google.firebase.firestore.Query$Direction")
         self.get_pagination_of_documents(
-            collection_path=f"users/{self.get_uid()}/clothes",
+            collection_path=f"users/{self.get_uid()}/{item_collection}",
             limit=30,
-            listener=self.update_rv,
+            listener=lambda *args: self.update_rv(*args, rv_id=rv_id),
             order_by=("created_at", Direction.DESCENDING),
         )
 
-    def update_rv(self, success, data):
+    def update_rv(self, success, data, rv_id):
         self.ids.spinner.active = False
         if success:
             for d in data:
                 if not (d.get("placeholder_image") and d.get("thumbnail_url")):
                     continue
-                self.ids.rv.data.append(
+                self.ids[rv_id].data.append(
                     {
                         "loading_image": d["placeholder_image"],
                         "source": d["thumbnail_url"],

@@ -42,3 +42,4 @@ def register_factory():
     r("HardStopDampedScrollEffect", module="components.effects")
     r("StretchOverScrollStencil", module="components.effects")
     r("RealRecycleView", module="components.recycler")
+    r("ProductWidget", module="components.product")

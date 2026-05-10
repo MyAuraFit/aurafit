@@ -1,0 +1,102 @@
+<SubscriptionScreen>
+    name: "subscription screen"
+    Image:
+        fit_mode: "cover"
+        source: "assets/images/splash.jpeg"
+    Gradient:
+        color_end: app.theme_cls.bg_color[:3] + [0]
+        color_start: app.theme_cls.bg_color
+        size_hint_y: None
+        height: sv.height
+        canvas.before:
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    ScrollView:
+        id: sv
+        scroll_distance: 0
+        bar_width: 0
+        do_scroll_x: False
+        effect_cls: "ScrollEffect"
+        CustomBoxLayout:
+            id: sv_box
+            adaptive_height: True
+            padding: "20dp", "20dp", "20dp", bottom.height
+            orientation: "vertical"
+            spacing: "15dp"
+            Widget:
+                size_hint_y: None
+                height: root.height / 4
+            CustomLabel:
+                text: "Unlock Your Signature Style"
+                bold: True
+                -color: "white"
+                adaptive_size: True
+                padding: "10dp", "5dp"
+                radius: self.height / 2
+                font_size: "14sp"
+                bg_color: 0, 0, 0, .5
+            CustomBoxLayout:
+                id: subs
+                adaptive_height: True
+                spacing: "15dp"
+                orientation: "vertical"
+            CustomBoxLayout:
+                adaptive_height: True
+                spacing: "10dp"
+                Divider:
+                    pos_hint: {"center_y": .5}
+                CustomLabel:
+                    text: "Or"
+                    adaptive_size: True
+                    font_size: "12sp"
+                    bold: True
+                Divider:
+                    pos_hint: {"center_y": .5}
+            CustomButton:
+                radius: "16dp"
+                text: "Purchase One Time Coins"
+                adaptive_height: True
+                font_size: "16sp"
+                padding: "20dp"
+                bold: True
+                line_color: app.theme_cls.primary_color[:3] + [.7]
+                background_color: app.theme_cls.card_color[:3] + [.7]
+                -color: app.theme_cls.primary_color
+                on_release: root.manager.current = "coin screen"
+    IconButton:
+        bg_color: 0, 0, 0, .5
+        -color: "white"
+        icon: "close"
+        radius: self.height / 2
+        font_size: "20sp"
+        pos: root.width - self.width - dp(20), root.height - self.height - app.statusbar_height
+        on_release: root.manager.go_back()
+    CustomBoxLayout:
+        id: bottom
+        adaptive_height: True
+        padding: "20dp", "20dp", "20dp", app.navbar_height + dp(20)
+        orientation: "vertical"
+        spacing: "10dp"
+        MagicButton:
+            id: btn
+            magic_speed: 0.3
+            adaptive_height: True
+            padding: "30dp", "20dp"
+            font_size: "16sp"
+            radius: self.height / 2
+            amount: 0
+            currency: ""
+            text: "Continue {:,.2f} {}".format(self.amount, self.currency)
+            markup: True
+            pos_hint: {"center_x": .5}
+            markup: True
+            bold: True
+            on_release: root.launch_billing_flow()
+        CustomLabel:
+            text: "Auto-Renew Cancel Anytime"
+            adaptive_height: True
+            font_size: "10sp"
+            halign: "center"
+
+
