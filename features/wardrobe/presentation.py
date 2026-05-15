@@ -3,6 +3,7 @@ __all__ = ("WardrobeScreen",)
 from pathlib import Path
 
 from jnius import autoclass
+from kivy.clock import mainthread, Clock
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.dropdown import DropDown
@@ -10,13 +11,13 @@ from kivy.uix.dropdown import DropDown
 from components.button import CustomButton
 from components.divider import Divider
 from features.basescreen import BaseScreen
-from sjfirebase.tools.mixin import FirestoreMixin, UserMixin
+from sjfirebase.tools.mixin import FirestoreMixin, UserMixin, StorageMixin
 
 kv_file_path = Path(__file__).with_suffix(".kv")
 Builder.load_file(str(kv_file_path))
 
 
-class WardrobeScreen(BaseScreen, FirestoreMixin, UserMixin):
+class WardrobeScreen(BaseScreen, FirestoreMixin, UserMixin, StorageMixin):
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -40,29 +41,59 @@ class WardrobeScreen(BaseScreen, FirestoreMixin, UserMixin):
         if self.ids.spinner.active:
             return
         self.ids.spinner.active = True
+        self.ids.spinner.opacity = 1
         Direction = autoclass("com.google.firebase.firestore.Query$Direction")
         self.get_pagination_of_documents(
             collection_path=f"users/{self.get_uid()}/{item_collection}",
             limit=30,
-            listener=lambda *args: self.update_rv(*args, rv_id=rv_id),
+            listener=lambda *args: self.update_rv(
+                *args, item_collection=item_collection, rv_id=rv_id
+            ),
             order_by=("created_at", Direction.DESCENDING),
         )
 
-    def update_rv(self, success, data, rv_id):
+    @mainthread
+    def update_rv(self, success, data, item_collection, rv_id):
         self.ids.spinner.active = False
+        self.ids.spinner.opacity = 0
         if success:
             for d in data:
                 if not (d.get("placeholder_image") and d.get("thumbnail_url")):
                     continue
+
                 self.ids[rv_id].data.append(
-                    {
-                        "loading_image": d["placeholder_image"],
-                        "source": d["thumbnail_url"],
-                        "on_release": lambda x=d: self.manager.switch_screen(
-                            "view screen", screen_data=x
-                        ),
-                    }
+                    self.extract_data(rv_id, d, item_collection)
                 )
+
+    def extract_data(self, rv_id, d, item_collection):
+        item = {
+            "image.loading_image": d["placeholder_image"],
+            "image.source": d["thumbnail_url"],
+            "image_url": d["image_url"],
+            "item_id": d["document_id"],
+            "on_release": lambda: self.manager.switch_screen(
+                "view screen", screen_data=d
+            ),
+            "delete_btn.on_release": lambda: self.delete_wardrobe_item(
+                item, rv_id, item_collection
+            ),
+        }
+        return item
+
+    def delete_wardrobe_item(self, item, rv_id, item_collection):
+        print(item)
+        gs_image_file = item["image_url"].split("/my-aurafit.firebasestorage.app")[1]
+        gs_thumbnail_file = item["image.source"].split(
+            "/my-aurafit.firebasestorage.app"
+        )[1]
+        self.delete_file(gs_image_file)
+        self.delete_file(gs_thumbnail_file)
+        self.delete_document(
+            f"users/{self.get_uid()}/{item_collection}/{item['item_id']}"
+        )
+        self.ids[rv_id].data.remove(item)
+        self.ids[rv_id].data = self.ids[rv_id].data.copy()
+        Clock.schedule_once(lambda _: self.ids[rv_id].refresh_from_data())
 
     def show_dropdown(self, widget):
         dd = DropDown(auto_width=False, width=self.width / 1.8)

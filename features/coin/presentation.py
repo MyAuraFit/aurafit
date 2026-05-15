@@ -8,6 +8,7 @@ from kivy.lang import Builder
 from kivy.uix.behaviors import ToggleButtonBehavior
 
 from features.basescreen import BaseScreen
+from libs.ads import Ads
 from libs.billing import Billing
 from libs.remoteconfigdatasource import RemoteConfigDataSource
 from sjfirebase.tools.mixin import UserMixin
@@ -126,3 +127,15 @@ class CoinScreen(BaseScreen, UserMixin):
                     obfuscated_account_id=self.get_uid(),
                 )
                 return
+
+    def show_ads(self):
+        def award_coins(reward_item):
+            self.ids.balance.coins += reward_item.getAmount() / 2
+            self.toast("Coins awarded: " + str(reward_item.getAmount() / 2))
+
+        self.app.open_dialog()
+        Ads.load_rewarded_ad(
+            on_user_earned_reward=award_coins,
+            on_show_ad=self.app.dismiss_dialog,
+            uid=self.get_uid(),
+        )

@@ -73,6 +73,10 @@ class InstantfitScreen(BaseScreen, StorageMixin, FirestoreMixin, UserMixin):
             self.ids.cloth_cover_image.source = filename
 
     def generate_my_aurafit(self):
+        if self.app.coins < 1:
+            self.toast("You don't have enough coins to generate a fit.")
+            self.manager.current = "coin screen"
+            return
         self.ids.content.disabled = True
         self.ids.btn.disabled = True
         self.upload_images(

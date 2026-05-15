@@ -46,8 +46,8 @@ class CoverImage(AsyncImage, StencilBehavior):
         )
         if self.loading_image and not image.loaded:
             self.texture = CoreImage(self.loading_image).texture
-        elif self.texture:
-            pass
+        # elif self.texture:
+        #     pass
         else:
             self.texture = image.texture
 

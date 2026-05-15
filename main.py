@@ -25,8 +25,6 @@ from features.screenmanager import AppScreenManager
 from libs.ads import Ads
 from libs.appcheck import initialize_appcheck
 from libs.appupdate import AppUpdate
-
-# from libs.billing import Billing
 from sjfirebase.tools.mixin import UserMixin
 from ui.theme import ThemeManager
 
@@ -57,6 +55,7 @@ class MyAuraFitApp(App):
     dialog = ObjectProperty()
     use_kivy_settings = False
     kv_file = StringProperty("imports.kv")
+    coins = NumericProperty(0)
     is_paused = BooleanProperty(False)
     statusbar_height = NumericProperty(0)
     navbar_height = NumericProperty(0)
@@ -76,7 +75,6 @@ class MyAuraFitApp(App):
             request_apply_insets()
         initialize_appcheck()
         Ads.initialize()
-        # Billing.initialize(self)
         self.theme_cls = ThemeManager()
         if platform == "android":
             from kvdroid.tools.darkmode import dark_mode

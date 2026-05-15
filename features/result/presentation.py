@@ -79,6 +79,9 @@ class ResultScreen(BaseScreen, FunctionMixin):
             return
         if not success:
             print(data)
+            if "Insufficient coins" in data[2]:
+                self.pop_warning_sheet(data[2])
+                return
             self.generate_outfit.decrement()
             self.generate_outfit()
             return
@@ -98,6 +101,14 @@ class ResultScreen(BaseScreen, FunctionMixin):
             self.generate_outfit.reset()
             return
         self.generate_outfit()
+
+    def pop_warning_sheet(self, message):
+        self.app.pop_disconnect_sheet(
+            text=message,
+            icon="alert-rhombus",
+            timeout=3,
+            on_dismiss=lambda: self.manager.switch_screen("coin screen"),
+        )
 
     def save_outfit(self, texture):
         from kvdroid import activity

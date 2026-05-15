@@ -138,7 +138,8 @@
         IconButton:
             id: delete_btn
             icon: "trash-can-outline"
-            bg_color: 0, 0, 0, 0.5
+            bg_color: app.theme_cls.bg_color_dark[:3] + [ .5]
+            -color: "white"
             adaptive_size: True
             color: app.theme_cls.bg_color
             padding: "10dp"
@@ -154,7 +155,7 @@
             id: spinner
             active: True if root.status == "uploading" else False
             size_hint: None, None
-            color: app.theme_cls.bg_color
+            color: "white"
             size: "30dp", "30dp"
             pos_hint: {"center_x": .5, "center_y": .5}
             line_width: "1.5dp"

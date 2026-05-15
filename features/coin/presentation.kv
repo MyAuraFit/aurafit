@@ -13,16 +13,31 @@
                 size: "35dp", "35dp"
                 font_size: "20sp"
                 shadow_color: app.theme_cls.shadow_color
-                on_release: root.manager.go_back()
+                on_release: root.manager.current = "home screen"
             CustomLabel:
                 text: "Earn Rewards"
                 adaptive_height: True
                 bold: True
                 halign: "center"
                 pos_hint: {"center_y": .5}
-            Widget:
-                size_hint: None, None
-                size: "35dp", "35dp"
+            ButtonBoxLayout:
+                adaptive_size: True
+                shadow_color: app.theme_cls.shadow_color
+                bg_color: app.theme_cls.card_color
+                radius: self.height / 2
+                padding: "10dp", "5dp"
+                spacing: "5dp"
+                pos_hint: {"center_y": .5}
+                on_release: root.manager.current = "coin screen"
+                Icon:
+                    icon: "star-circle"
+                    font_size: "20sp"
+                CustomLabel:
+                    text: "{}".format(app.coins)
+                    bold: True
+                    pos_hint: {"center_y": .5}
+                    adaptive_size: True
+                    font_size: "14sp"
         ScrollView:
             id: sv
             scroll_distance: 0
@@ -61,7 +76,9 @@
                             text: "Balance: "
                             adaptive_size: True
                         CustomLabel:
-                            text: "0 bonus coin"
+                            id: balance
+                            coins: 0
+                            text: "{} bonus coin".format(self.coins)
                             adaptive_size: True
                             bold: True
                             color: app.theme_cls.primary_color
@@ -73,6 +90,7 @@
                     adaptive_height: True
                     padding: "20dp"
                     spacing: "10dp"
+                    on_release: root.show_ads()
                     Icon:
                         icon: "play-circle"
                         font_size: "40sp"

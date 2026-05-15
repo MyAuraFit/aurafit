@@ -1,4 +1,10 @@
+from threading import Thread
+
 from kivy.clock import Clock
+
+from android.runnable import run_on_ui_thread  # noqa
+from kvdroid import activity
+from kvdroid.tools import toast
 from sjadmob.jclass import (
     MobileAds,
     AdRequest,
@@ -6,15 +12,13 @@ from sjadmob.jclass import (
     RewardedAd,
     RewardedAdLoadCallback,
 )
+from sjadmob.jclass.RewardItem import RewardItem
+from sjadmob.jclass.ServerSideVerificationOptions import ServerSideVerificationOptions
 from sjadmob.jinterface import (
     FullScreenContentListener,
     RewardedAdLoadListener,
     OnUserEarnedRewardListener,
 )
-
-from android.runnable import run_on_ui_thread  # noqa
-from kvdroid import activity
-from kvdroid.tools import toast
 
 
 class Ads:
@@ -24,16 +28,20 @@ class Ads:
 
     @classmethod
     def initialize(cls):
-        MobileAds.initialize(activity)
+        Thread(target=MobileAds.initialize, args=(activity,)).start()
 
     @classmethod
     @run_on_ui_thread
-    def load_rewarded_ad(cls, on_user_earned_reward):
+    def load_rewarded_ad(cls, on_user_earned_reward, on_show_ad, uid=None):
         if cls.is_showing_ad:
             return
 
-        def on_ad_loaded(ad):
+        def on_ad_loaded(ad: RewardedAd):
             cls.rewarded_ad = ad
+            if uid:
+                cls.rewarded_ad.setServerSideVerificationOptions(
+                    ServerSideVerificationOptions.Builder().setUserId(uid).build()
+                )
             cls.is_loading_ad = False
             cls._full_screen_content_listener = FullScreenContentListener(
                 lambda: print("clicked")
@@ -41,12 +49,14 @@ class Ads:
             cls.rewarded_ad.setFullScreenContentCallback(
                 FullScreenContentCallback(cls._full_screen_content_listener)
             )
+            on_show_ad()
             cls.show_ad(on_user_earned_reward)
 
         def on_ad_failed_to_load(ad):
             cls.is_loading_ad = False
             Clock.schedule_once(
-                lambda _: cls.load_rewarded_ad(on_user_earned_reward), 20
+                lambda _: cls.load_rewarded_ad(on_user_earned_reward, on_show_ad, uid),
+                5,
             )
             print(ad.message)
             toast("Ads failing to load due to unstable network connection", True)
@@ -56,7 +66,7 @@ class Ads:
         )
         RewardedAd.load(
             activity,
-            "ca-app-pub-2754450796751384/2982929164",
+            "ca-app-pub-9820946188047221/1008557427",
             AdRequest.Builder().build(),
             RewardedAdLoadCallback(cls._ad_load_listener),
         )
@@ -75,7 +85,7 @@ class Ads:
         cls.rewarded_ad.show(activity, cls._listener)
 
     @classmethod
-    def on_user_earned_reward(cls, reward_item, callback):
+    def on_user_earned_reward(cls, reward_item: RewardItem, callback):
         if callback:
             callback(reward_item)
         cls.is_showing_ad = False

@@ -16,7 +16,7 @@ Builder.load_file(str(kv_file_path))
 class AutofitScreen(BaseScreen, FirestoreMixin, UserMixin):
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.at_least_one_active_sheet = False
+        self.at_most_one_active_sheet = False
 
     def on_enter(self):
         self.get_pagination_of_documents(
@@ -31,6 +31,10 @@ class AutofitScreen(BaseScreen, FirestoreMixin, UserMixin):
         )
 
     def generate_my_aurafit(self):
+        if self.app.coins < 1:
+            self.toast("You don't have enough coins to generate a fit.")
+            self.manager.current = "coin screen"
+            return
         screen_data = ScreenData()
         screen_data.setdefault("type", "autofit")
         screen_data.setdefault("mood", self.ids.mood_text_input.text)
@@ -44,7 +48,7 @@ class AutofitScreen(BaseScreen, FirestoreMixin, UserMixin):
 
     @mainthread
     def pop_warning_sheet(self, success, data, folder):
-        if self.at_least_one_active_sheet:
+        if self.at_most_one_active_sheet:
             return
         if not success:
             return
@@ -61,4 +65,4 @@ class AutofitScreen(BaseScreen, FirestoreMixin, UserMixin):
             },
             on_dismiss=lambda: setattr(self, "at_least_one_active_sheet", False),
         )
-        self.at_least_one_active_sheet = True
+        self.at_most_one_active_sheet = True

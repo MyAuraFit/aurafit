@@ -49,18 +49,6 @@ class GoogleAuthMixin(AuthMixin, UserMixin, FirestoreMixin):
     @mainthread
     def on_sign_in_complete(self, is_success, message):
         if is_success:
-            name = self.get_display_name().split(" ")
-            if len(name) > 1:
-                first_name, last_name = name
-            else:
-                first_name = name[0]
-                last_name = ""
-            data = dict(
-                first_name=first_name,
-                last_name=last_name,
-                email=self.get_email(),
-            )
-            self.set_document(f"users/{self.get_uid()}", data, merge=True)
             self.manager.current = "home screen"
         else:
             self.toast(message)

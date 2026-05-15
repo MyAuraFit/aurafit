@@ -20,9 +20,24 @@
                 bold: True
                 halign: "center"
                 pos_hint: {"center_y": .5}
-            Widget:
-                size_hint: None, None
-                size: "35dp", "35dp"
+            ButtonBoxLayout:
+                adaptive_size: True
+                shadow_color: app.theme_cls.shadow_color
+                bg_color: app.theme_cls.card_color
+                radius: self.height / 2
+                padding: "10dp", "5dp"
+                spacing: "5dp"
+                pos_hint: {"center_y": .5}
+                on_release: root.manager.current = "coin screen"
+                Icon:
+                    icon: "star-circle"
+                    font_size: "20sp"
+                CustomLabel:
+                    text: "{}".format(app.coins)
+                    bold: True
+                    pos_hint: {"center_y": .5}
+                    adaptive_size: True
+                    font_size: "14sp"
         Divider
         ScrollView:
             scroll_distance: 0
@@ -44,7 +59,7 @@
                     padding: "20dp"
                     spacing: "15dp"
                     CustomLabel:
-                        text: "K"
+                        text: root.get_display_name()[0].upper()
                         font_size: "32sp"
                         bold: True
                         size_hint: None, None
@@ -93,13 +108,13 @@
                         shadow_color: 0, 0, 0, 0
                         radius: 0
                     Divider
-                    AccountItem:
-                        icon: "account-convert-outline"
-                        text: "My Referrals"
-                        bg_color: 0, 0, 0, 0
-                        line_color: 0, 0, 0, 0
-                        shadow_color: 0, 0, 0, 0
-                        radius: 0
+#                    AccountItem:
+#                        icon: "account-convert-outline"
+#                        text: "My Referrals"
+#                        bg_color: 0, 0, 0, 0
+#                        line_color: 0, 0, 0, 0
+#                        shadow_color: 0, 0, 0, 0
+#                        radius: 0
                 CustomBoxLayout:
                     adaptive_height: True
                     shadow_color: app.theme_cls.shadow_color

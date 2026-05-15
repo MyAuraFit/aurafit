@@ -71,7 +71,7 @@
         radius: self.height / 2
         font_size: "20sp"
         pos: root.width - self.width - dp(20), root.height - self.height - app.statusbar_height
-        on_release: root.manager.go_back()
+        on_release: root.manager.current = "coin screen"
     CustomBoxLayout:
         id: bottom
         adaptive_height: True

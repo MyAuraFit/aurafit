@@ -68,7 +68,18 @@
         pos_hint: {"center_x": .5}
         y: "80dp"
 
-<WardrobeItem@TouchRippleButtonBehavior+CoverImage>
+<WardrobeItem@RecycleKVIDsDataViewBehavior+TouchRippleButtonBehavior+RelativeLayout>
+    CoverImage:
+        id: image
+    IconButton:
+        id: delete_btn
+        bg_color: app.theme_cls.bg_color_dark[:3] + [ .5]
+        icon: "trash-can-outline"
+        -radius: "10dp"
+        -color: "white"
+        font_size: "18sp"
+        size: "28dp", "28dp"
+        pos_hint: {"top": 0.95, "right": 0.95}
 
 <WardrobeTab@ToggleButtonBehavior+CustomLabel>:
     group: "wardrobe_tab"

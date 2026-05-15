@@ -29,7 +29,7 @@ source.exclude_dirs = tests, bin, venv, .venv, cache, python-for-android, .kivy,
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.4
+version = 0.5
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -205,7 +205,7 @@ android.gradle_dependencies = io.github.simplejnius:sjfirebase:1.3.0,
     com.google.firebase:firebase-auth,androidx.appcompat:appcompat:1.7.1,
     com.google.firebase:firebase-firestore,com.google.android.material:material:1.12.0,
     androidx.credentials:credentials:1.3.0,androidx.core:core:1.17.0,
-    androidx.credentials:credentials-play-services-auth:1.3.0,com.google.android.gms:play-services-ads:24.6.0,
+    androidx.credentials:credentials-play-services-auth:1.3.0,com.google.android.gms:play-services-ads:25.2.0,
     com.google.android.libraries.identity.googleid:googleid:1.1.1,com.google.firebase:firebase-config,
     com.google.firebase:firebase-analytics,com.google.firebase:firebase-appcheck-playintegrity,
     com.android.billingclient:billing:8.3.0,com.google.android.play:review:2.0.2,
@@ -269,7 +269,7 @@ android.enable_androidx = True
 #android.wakelock = False
 
 # (list) Android application meta-data to set (key=value format)
-android.meta_data = com.google.android.gms.ads.APPLICATION_ID=ca-app-pub-8921459519197001~5181046899
+android.meta_data = com.google.android.gms.ads.APPLICATION_ID=ca-app-pub-9820946188047221~2237878611
 #    com.google.firebase.messaging.default_notification_channel_id=firebase
 
 # (list) Android library project to add (will be added in the
