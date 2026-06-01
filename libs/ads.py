@@ -1,7 +1,5 @@
 from threading import Thread
 
-from kivy.clock import Clock
-
 from android.runnable import run_on_ui_thread  # noqa
 from kvdroid import activity
 from kvdroid.tools import toast
@@ -32,7 +30,7 @@ class Ads:
 
     @classmethod
     @run_on_ui_thread
-    def load_rewarded_ad(cls, on_user_earned_reward, on_show_ad, uid=None):
+    def load_rewarded_ad(cls, on_user_earned_reward, on_show_ad, on_ad_error, uid=None):
         if cls.is_showing_ad:
             return
 
@@ -54,12 +52,9 @@ class Ads:
 
         def on_ad_failed_to_load(ad):
             cls.is_loading_ad = False
-            Clock.schedule_once(
-                lambda _: cls.load_rewarded_ad(on_user_earned_reward, on_show_ad, uid),
-                5,
-            )
             print(ad.message)
             toast("Ads failing to load due to unstable network connection", True)
+            on_ad_error()
 
         cls._ad_load_listener = RewardedAdLoadListener(
             on_ad_loaded, on_ad_failed_to_load

@@ -137,5 +137,6 @@ class CoinScreen(BaseScreen, UserMixin):
         Ads.load_rewarded_ad(
             on_user_earned_reward=award_coins,
             on_show_ad=self.app.dismiss_dialog,
+            on_ad_error=self.app.dismiss_dialog,
             uid=self.get_uid(),
         )

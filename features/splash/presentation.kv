@@ -48,6 +48,7 @@
             -bg_color: app.theme_cls.transparent_color
             -color: app.theme_cls.text_color
             markup: True
-            text: "By using [u]My Aurafit[/u], you agree to our [u]Terms and Privacy Policy[/u]"
+            text: "By using [u]My Aurafit[/u], you agree to our [u][ref=privacy]Terms and Privacy Policy[/ref][/u]"
             halign: "center"
             font_size: "13sp"
+            on_ref_press: webbrowser.open("https://www.my-aurafit.com/privacy")

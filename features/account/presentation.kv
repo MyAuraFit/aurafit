@@ -86,12 +86,13 @@
                             color: app.theme_cls.text_color[:3] + [.5]
                             shorten_from: "right"
                             shorten: True
-                    Icon:
-                        icon: "chevron-right"
-                        pos_hint: {"center_y": .5}
+#                    Icon:
+#                        icon: "chevron-right"
+#                        pos_hint: {"center_y": .5}
                 AccountItem:
                     icon: "bell-outline"
                     text: "What's New"
+                    on_release: webbrowser.open("https://play.google.com/store/apps/details?id=com.myaurafit")
                 CustomBoxLayout:
                     adaptive_height: True
                     shadow_color: app.theme_cls.shadow_color
@@ -107,6 +108,7 @@
                         line_color: 0, 0, 0, 0
                         shadow_color: 0, 0, 0, 0
                         radius: 0
+                        on_release: webbrowser.open("https://play.google.com/store/apps/details?id=com.myaurafit")
                     Divider
 #                    AccountItem:
 #                        icon: "account-convert-outline"
@@ -130,6 +132,7 @@
                         line_color: 0, 0, 0, 0
                         shadow_color: 0, 0, 0, 0
                         radius: 0
+                        on_release: webbrowser.open("https://play.google.com/store/apps/datasafety?id=com.myaurafit")
                     Divider
                     AccountItem:
                         icon: "file-document-check-outline"
@@ -138,6 +141,7 @@
                         line_color: 0, 0, 0, 0
                         shadow_color: 0, 0, 0, 0
                         radius: 0
+                        on_release: webbrowser.open("https://www.my-aurafit.com/privacy")
                     Divider
                     AccountItem:
                         icon: "text-box-outline"
@@ -146,6 +150,7 @@
                         line_color: 0, 0, 0, 0
                         shadow_color: 0, 0, 0, 0
                         radius: 0
+                        on_release: webbrowser.open("https://www.my-aurafit.com/terms")
 
 
 
